@@ -2,6 +2,7 @@
 
 // STL
 #include <vector>
+#include <string>
 
 // ROS
 #include <ros/ros.h>
@@ -33,7 +34,7 @@ class StateEstimator : public ModelPlugin {
     Eigen::Vector3d mat2aa(const Eigen::Matrix3d &R);
 
     // callback function for Gazebo
-    event::ConnectionPtr updateConnection_;
+    event::ConnectionPtr updateConnection;
 
     // robot state publisher
     ros::Publisher statePublisher_;
@@ -50,6 +51,11 @@ class StateEstimator : public ModelPlugin {
     // pinocchio model
     pinocchio::Model model_;
     pinocchio::Data data_;
+
+    std::string lf_name_;
+    std::string rf_name_;
+    std::string lh_name_;
+    std::string rh_name_;
 
     // update rate
     double updateRate_;

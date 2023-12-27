@@ -49,9 +49,9 @@ bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::No
     }
 
     // subscribe to WBC control command topic
-    const std::string topic = "bobnet_gazebo/joint_controller/command";
+    const std::string topic = "/bobnet_gazebo/joint_controller/command";
     command_subscriber =
-        n.subscribe<bobnet_msgs::JointCommandArray>(topic, 1, &JointController::command_callback, this);
+        ros::NodeHandle().subscribe<bobnet_msgs::JointCommandArray>(topic, 1, &JointController::command_callback, this);
 
     // Initialize real-time buffer
     command_buffer.writeFromNonRT(BufferType());

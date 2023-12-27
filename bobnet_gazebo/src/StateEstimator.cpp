@@ -14,19 +14,19 @@ namespace gazebo {
 /******************************************************************************/
 void StateEstimator::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
     // setup Gazebo event callback
-    updateConnection_ = event::Events::ConnectWorldUpdateBegin(std::bind(&StateEstimator::OnUpdate, this));
+    updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&StateEstimator::OnUpdate, this));
 
     // setup ROS publisher
-    ros::NodeHandle nh(robot->GetName());
+    ros::NodeHandle nh;
     std::string stateTopic = robot->GetName() + "/state";
-    if (!nh.getParam("bobnet_gazebo/state_topic", stateTopic)) {
+    if (!nh.getParam("/bobnet_gazebo/state_topic", stateTopic)) {
         ROS_WARN_STREAM("No state topic specified for " << robot->GetName() << ", using default: " << stateTopic);
     }
     statePublisher_ = nh.advertise<bobnet_msgs::RobotState>(stateTopic, 2);
 
     // get baselink name
     std::string baseLinkName = "base_link";
-    if (!nh.getParam("bobnet_gazebo/base_link", baseLinkName)) {
+    if (!nh.getParam("/bobnet_gazebo/base_link", baseLinkName)) {
         ROS_WARN_STREAM("No base link specified for " << robot->GetName() << ", using default: " << baseLinkName);
     }
 
@@ -35,13 +35,25 @@ void StateEstimator::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
 
     // get update rate
     updateRate_ = 100.0;
-    if (!nh.getParam("bobnet_gazebo/state_update_rate", updateRate_)) {
+    if (!nh.getParam("/bobnet_gazebo/state_update_rate", updateRate_)) {
         ROS_WARN_STREAM("No update rate specified for " << robot->GetName() << ", using default: " << updateRate_);
     }
 
+    // Load foot names
+    auto loadFootName = [&nh](std::string &footName, const std::string &defaultName, const std::string &footNameParam) {
+        if (!nh.getParam(footNameParam, footName)) {
+            ROS_WARN_STREAM("No footname specified for " << defaultName << ", using default: " << defaultName);
+            footName = defaultName;
+        }
+    };
+    loadFootName(lf_name_, "LF_FOOT", "/bobnet_gazebo/lf_foot");
+    loadFootName(lh_name_, "LH_FOOT", "/bobnet_gazebo/lh_foot");
+    loadFootName(rf_name_, "RF_FOOT", "/bobnet_gazebo/rf_foot");
+    loadFootName(rh_name_, "RH_FOOT", "/bobnet_gazebo/rh_foot");
+
     // prepare pinocchio model
     std::string urdfString;
-    nh.getParam("robot_description", urdfString);
+    nh.getParam("/robot_description", urdfString);
     ROS_INFO_STREAM("Loading URDF for " << robot->GetName());
     pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
     ROS_INFO_STREAM("Loaded URDF for " << robot->GetName());
@@ -151,16 +163,16 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
     pinocchio::framesForwardKinematics(model_, data_, q);
 
     // LF foot position
-    const auto &lf_foot_pos = data_.oMf[model_.getFrameId("LF_FOOT")].translation();
+    const auto &lf_foot_pos = data_.oMf[model_.getFrameId(lf_name_)].translation();
     msg_ref.lf_position_world = {lf_foot_pos[0], lf_foot_pos[1], lf_foot_pos[2]};
 
-    const auto &lh_foot_pos = data_.oMf[model_.getFrameId("LH_FOOT")].translation();
+    const auto &lh_foot_pos = data_.oMf[model_.getFrameId(lh_name_)].translation();
     msg_ref.lh_position_world = {lh_foot_pos[0], lh_foot_pos[1], lh_foot_pos[2]};
 
-    const auto &rf_foot_pos = data_.oMf[model_.getFrameId("RF_FOOT")].translation();
+    const auto &rf_foot_pos = data_.oMf[model_.getFrameId(rf_name_)].translation();
     msg_ref.rf_position_world = {rf_foot_pos[0], rf_foot_pos[1], rf_foot_pos[2]};
 
-    const auto &rh_foot_pos = data_.oMf[model_.getFrameId("RH_FOOT")].translation();
+    const auto &rh_foot_pos = data_.oMf[model_.getFrameId(rh_name_)].translation();
     msg_ref.rh_position_world = {rh_foot_pos[0], rh_foot_pos[1], rh_foot_pos[2]};
 
     // update publish time
