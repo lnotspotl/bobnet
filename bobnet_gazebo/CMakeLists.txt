@@ -137,7 +137,7 @@ add_library(JointController src/JointController.cpp)
 target_link_libraries(JointController ${catkin_LIBRARIES}) 
 
 add_library(StateEstimator src/StateEstimator.cpp)
-target_link_libraries(StateEstimator ${gazebo_LIBRARIES} ${pinocchio_LIBRARIES})
+target_link_libraries(StateEstimator ${catkin_LIBRARIES} ${gazebo_LIBRARIES} ${pinocchio_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -186,11 +186,11 @@ target_link_libraries(StateEstimator ${gazebo_LIBRARIES} ${pinocchio_LIBRARIES})
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
+install(TARGETS StateEstimator
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/

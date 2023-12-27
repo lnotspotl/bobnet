@@ -42,7 +42,9 @@ void StateEstimator::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
     // prepare pinocchio model
     std::string urdfString;
     nh.getParam("robot_description", urdfString);
+    ROS_INFO_STREAM("Loading URDF for " << robot->GetName());
     pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
+    ROS_INFO_STREAM("Loaded URDF for " << robot->GetName());
     data_ = pinocchio::Data(model_);
 
     // load joint pointers

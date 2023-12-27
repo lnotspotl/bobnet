@@ -1,0 +1,37 @@
+<launch>
+    <!-- Gazebo arguments -->
+    <arg name="gui"                default="false" />
+    <arg name="world"              default="step_10cm"/>
+    <arg name="x"                  default="0.0"/>
+    <arg name="y"                  default="0.0"/>
+    <arg name="z"                  default="3.0"/>
+    <arg name="yaw"                default="0.0"/>
+    <arg name="joint_controller_ns" default="anymal_c"/>
+
+    <!-- RL controller arguments -->
+    <arg name="rl_policy_path"     default="/home/kuba/Downloads/distilled_policy_jittable.pt_jitted.pt"/>
+
+    <!-- Reference arguments -->
+    <arg name="reference_source"   default="joystick"/>
+    <arg name="joystick_dev"       default="/dev/input/js0"/>
+
+    <!-- Generic arguments -->
+    <arg name="description_name"   default="robot_description"/>
+
+    <!-- URDF description -->
+    <arg name="urdfFile"          default="$(find anymal_description)/urdf/anymal.urdf"/>
+    <param name="$(arg description_name)" textfile="$(arg urdfFile)"/>
+
+    <!-- Start Gazebo simulation -->
+    <include file="$(find bobnet_gazebo)/launch/simulation.launch">
+        <arg name="joint_controller_ns" value="$(arg joint_controller_ns)"/>
+        <arg name="description_name" value="$(arg description_name)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="world" value="$(arg world)"/>
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="yaw" value="$(arg yaw)"/>
+    </include>
+
+</launch>

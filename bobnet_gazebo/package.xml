@@ -66,8 +66,6 @@
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <export>
       <controller_interface plugin="${prefix}/controller_plugins.xml"/>
-    </export>
   </export>
 </package>

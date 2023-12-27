@@ -13,8 +13,8 @@
 #include <gazebo/physics/physics.hh>
 
 // Pinocchio
-#include "pinocchio/parsers/urdf.hpp"
 #include "pinocchio/algorithm/joint-configuration.hpp"
+#include "pinocchio/parsers/urdf.hpp"
 
 // Eigen
 #include <Eigen/Dense>
