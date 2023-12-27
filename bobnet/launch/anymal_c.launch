@@ -13,6 +13,7 @@
 
     <!-- Reference arguments -->
     <arg name="reference_source"   default="joystick"/>
+    <param name="reference_source" value="$(arg reference_source)"/>
     <arg name="joystick_dev"       default="/dev/input/js0"/>
 
     <!-- Generic arguments -->
@@ -40,5 +41,15 @@
         <arg name="z" value="$(arg z)"/>
         <arg name="yaw" value="$(arg yaw)"/>
     </include>
+
+    <!-- Joystick reference -->
+    <group if="$(arg reference_source == 'joystick')">
+        <include file="$(find bobnet_reference)/launch/joystick.launch">
+            <arg name="joystick_dev" value="$(arg joystick_dev)"/>
+	</group>
+
+    <!-- Twist reference -->
+    <group if="$(arg reference_source == 'twist')">
+    </group>
 
 </launch>
