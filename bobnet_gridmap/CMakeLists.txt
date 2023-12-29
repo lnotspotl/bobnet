@@ -7,7 +7,14 @@ project(bobnet_gridmap)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    grid_map_ros
+    grid_map_pcl
+)
+
+
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -99,10 +106,10 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES bobnet_gridmap
+  INCLUDE_DIRS include
+  LIBRARIES bobnet_gridmap
 #  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+ DEPENDS OpenCV
 )
 
 ###########
@@ -112,14 +119,16 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+ include
+ ${catkin_INCLUDE_DIRS}
+ ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/bobnet_gridmap.cpp
-# )
+add_library(bobnet_gridmap
+  src/GridmapInterface.cpp
+)
+target_link_libraries(bobnet_gridmap ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -129,7 +138,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/bobnet_gridmap_node.cpp)
+add_executable(load_map
+ src/load_map.cpp
+ src/StaticLoader.cpp
+ )
+target_link_libraries(load_map ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

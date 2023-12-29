@@ -1,6 +1,8 @@
 #include <bobnet_gridmap/StaticLoader.h>
 
+#include <pcl/io/vtk_lib_io.h>
 #include <grid_map_pcl/GridMapPclConverter.hpp>
+
 
 namespace bobnet_gridmap {
 
@@ -15,8 +17,8 @@ StaticLoader::StaticLoader(scalar_t resolution, const std::string &map_frame, co
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-StaticLoader::StaticLoader(const std::string &path, scalar_t resolution, const std::string &map_frame,
-                           const std::string &topic)
+StaticLoader::StaticLoader(const std::string &path, scalar_t resolution,
+                           const std::string &map_frame, const std::string &topic)
     : StaticLoader(resolution, map_frame, topic) {
     load(path);
 }

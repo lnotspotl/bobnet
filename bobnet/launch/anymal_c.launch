@@ -10,6 +10,7 @@
 
     <!-- RL controller arguments -->
     <arg name="rl_policy_path"     default="/home/kuba/Downloads/distilled_policy_jittable.pt_jitted.pt"/>
+    <param name="rl_policy_path"   value="$(arg rl_policy_path)"/>
 
     <!-- Reference arguments -->
     <arg name="reference_source"   default="joystick"/>
@@ -43,13 +44,22 @@
     </include>
 
     <!-- Joystick reference -->
-    <group if="$(arg reference_source == 'joystick')">
+    <group if="$(eval reference_source == 'joystick')">
         <include file="$(find bobnet_reference)/launch/joystick.launch">
             <arg name="joystick_dev" value="$(arg joystick_dev)"/>
+        </include>
 	</group>
 
     <!-- Twist reference -->
-    <group if="$(arg reference_source == 'twist')">
+    <group if="$(eval reference_source == 'twist')">
     </group>
 
+    <!-- Gridmap loader -->
+    <param name="/bobnet/gridmap_topic" value="/anymal_c/grid_map"/>
+    <param name="/bobnet/gridmap_path" value="$(find bobnet_gazebo)/launch/worlds/$(arg world)/$(arg world).ply"/>
+    <node name="gridmap_loader" pkg="bobnet_gridmap" type="load_map"/>
+
+    <!-- Robot interface -->
+    <param name="/bobnet/interface_rate" value="50"/>
+    <node name="robot_interface" pkg="bobnet" type="anymal_c_main" output="screen"/>
 </launch>

@@ -3,15 +3,13 @@
 #include <string>
 
 #include <ros/ros.h>
-#include <bobnet_controllers/Types.h>
-
 // Ros messages
 #include <sensor_msgs/Joy.h>
-#include <sensor_msgs/Twist.h>
+#include <geometry_msgs/Twist.h>
 
 namespace bobnet_reference {
 
-using namespace bobnet_controllers;
+using scalar_t = double;
 
 struct VelocityCommand {
     scalar_t velocity_x = 0.0;
@@ -33,11 +31,13 @@ class RosReferenceGenerator : public ReferenceGenerator {
 
     VelocityCommand getVelocityReference(scalar_t dt) override { return reference_; }
 
+   protected:
+    VelocityCommand reference_;
+
    private:
     virtual void callback(const T &msg) = 0;
 
     ros::Subscriber subscriber_;
-    VelocityCommand reference_;
 };
 
 class JoystickReferenceGenerator : public RosReferenceGenerator<sensor_msgs::Joy> {
@@ -71,13 +71,13 @@ class JoystickReferenceGenerator : public RosReferenceGenerator<sensor_msgs::Joy
     void callback(const sensor_msgs::Joy &msg) override;
 };
 
-class TwistReferenceGenerator : public RosReferenceGenerator<sensor_msgs::Twist> {
+class TwistReferenceGenerator : public RosReferenceGenerator<geometry_msgs::Twist> {
    public:
     TwistReferenceGenerator(ros::NodeHandle &nh, const std::string &topic)
-        : RosReferenceGenerator<sensor_msgs::Twist>(nh, topic) {}
+        : RosReferenceGenerator<geometry_msgs::Twist>(nh, topic) {}
 
    private:
-    void callback(const sensor_msgs::Twist &msg) override;
+    void callback(const geometry_msgs::Twist &msg) override;
 };
 
 }  // namespace bobnet_reference

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet_controllers)
 
+
+set(Torch_DIR "/usr/local/share/torch_cpp/libtorch/share/cmake/Torch")
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -10,7 +13,10 @@ project(bobnet_controllers)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     bobnet_msgs
+    bobnet_reference
+    bobnet_gridmap
 )
+find_package(Torch REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -104,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES bobnet_controllers
- CATKIN_DEPENDS roscpp bobnet_msgs
+ CATKIN_DEPENDS roscpp bobnet_msgs bobnet_reference
 #  DEPENDS system_lib
 )
 
@@ -117,16 +123,19 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
+    ${TORCH_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 add_library(bobnet_controllers
     src/Controllers.cpp
+    src/RobotInterface.cpp
+    src/Utils.cpp
     src/InverseKinematics.cpp
     src/CentralPatternGenerator.cpp
     src/anymal_c/AnymalCInverseKinematics.cpp
 )
-target_link_libraries(bobnet_controllers ${catkin_LIBRARIES})
+target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet)
 
+set(Torch_DIR "/usr/local/share/torch_cpp/libtorch/share/cmake/Torch")
+
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -10,7 +13,10 @@ project(bobnet)
 find_package(catkin REQUIRED COMPONENTS 
     roscpp
     bobnet_controllers
+    bobnet_gridmap
 )
+find_package(Torch REQUIRED)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,6 +123,8 @@ catkin_package(
 include_directories(
 # include
 ${catkin_INCLUDE_DIRS}
+${TORCH_INCLUDE_DIRS}
+
 )
 
 ## Declare a C++ library
@@ -133,7 +141,7 @@ ${catkin_INCLUDE_DIRS}
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(anymal_c_main src/anymal_c_main.cpp)
-target_link_libraries(anymal_c_main ${catkin_LIBRARIES})
+target_link_libraries(anymal_c_main ${catkin_LIBRARIES} ${TORCH_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

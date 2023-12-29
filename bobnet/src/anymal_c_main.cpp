@@ -3,11 +3,15 @@
 
 #include <ros/ros.h>
 
+#include <bobnet_controllers/RobotInterface.h>
 #include <bobnet_controllers/Controllers.h>
 #include <bobnet_controllers/CentralPatternGenerator.h>
+#include <bobnet_gridmap/GridmapInterface.h>
 
 #include <bobnet_controllers/anymal_c/AnymalCInfo.h>
 #include <bobnet_controllers/anymal_c/AnymalCInverseKinematics.h>
+
+using bobnet_controllers::scalar_t;
 
 int main(int argc, char *argv[]) {
     ROS_INFO("Starting bobnet_controllers node");
@@ -21,17 +25,38 @@ int main(int argc, char *argv[]) {
 
     ROS_INFO("Setup done, starting controller");
 
-    const std::string jointCommandTopic = "/anymal_c/joint_controller/bobnet_gazebo/joint_controller/command";
-    ros::Publisher publisher = nh.advertise<bobnet_msgs::JointCommandArray>(jointCommandTopic, 1);
+    auto standControllerPtr = std::unique_ptr<bobnet_controllers::StandController>(
+        new bobnet_controllers::StandController(info.jointNames, info.standControllerJointAngles, 400, 10));
 
-    bobnet_controllers::StandController controller(info.jointNames, info.standControllerJointAngles, 400.0, 10.0);
+    const std::string stateTopic = "/anymal_c/state";
+    const std::string changeControllerTopic = "/anymal_c/changeController";
+    const std::string commandTopic = "/bobnet_gazebo/joint_controller/command";
 
-    ros::Rate rate(50);
-    while (ros::ok()) {
-        auto commandMsg = controller.getCommandMessage();
-        publisher.publish(commandMsg);
-        rate.sleep();
+    scalar_t rate = 50;
+    if (!nh.getParam("/bobnet/interface_rate", rate)) {
+        ROS_WARN_STREAM("Could not get rate parameter, using default value: " << rate);
     }
+
+    auto refPtr = std::unique_ptr<bobnet_reference::JoystickReferenceGenerator>(
+        new bobnet_reference::JoystickReferenceGenerator(nh, "/joy", 0.5, 1, 0, 2, 1.0, 1.0, 1.0));
+
+    std::string rlModelPath = "";
+    if (!nh.getParam("/rl_policy_path", rlModelPath)) {
+        ROS_WARN_STREAM("Could not get rl_model_path parameter, using default value: " << rlModelPath);
+    }
+
+    auto gridmapPtr = std::unique_ptr<bobnet_gridmap::GridmapInterface>(
+        new bobnet_gridmap::GridmapInterface(nh, "/anymal_c/grid_map"));
+    gridmapPtr->waitTillInitialized();
+
+    auto rlControllerPtr = std::unique_ptr<bobnet_controllers::RlController>(new bobnet_controllers::RlController(
+        info.jointNames, 80, 2, std::move(ik), std::move(cpg), std::move(refPtr), std::move(gridmapPtr), rlModelPath));
+
+    bobnet_controllers::RobotInterface interface(stateTopic, changeControllerTopic, commandTopic, rate,
+                                                 std::move(standControllerPtr), std::move(rlControllerPtr));
+
+    interface.setup();
+    interface.run();
 
     return EXIT_SUCCESS;
 }

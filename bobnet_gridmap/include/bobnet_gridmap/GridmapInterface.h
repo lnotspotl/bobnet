@@ -1,13 +1,16 @@
 #pragma once
 
 #include <ros/ros.h>
+#include <vector>
 
-#include <bobnet_controllers/Types.h>
+#include <Eigen/Dense>
+
 #include <grid_map_ros/grid_map_ros.hpp>
 
 namespace bobnet_gridmap {
 
-using namespace bobnet_controllers;
+using scalar_t = double;
+using vs = std::vector<scalar_t>;
 
 class GridmapInterface {
    public:
@@ -20,7 +23,8 @@ class GridmapInterface {
         return map_.atPosition("elevation", position);
     }
 
-    vs atPositions(vs &xs, vs &ys, scalar_t offset_x, scalar_t offset_y);
+    vs atPositions(Eigen::MatrixXd &rotatedSamplingPoints, scalar_t x_offset, scalar_t y_offset);
+    Eigen::MatrixXd samplingPositions_;
 
    private:
     void callback(const grid_map_msgs::GridMap &msg);
@@ -28,6 +32,8 @@ class GridmapInterface {
     ros::Subscriber subscriber_;
     grid_map::GridMap map_;
     bool initialized_ = false;
-}
+
+    void generateSamplingPositions();
+};
 
 }  // namespace bobnet_gridmap

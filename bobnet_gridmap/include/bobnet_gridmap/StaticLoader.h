@@ -2,17 +2,16 @@
 
 #include <ros/ros.h>
 #include <string>
-#include <bobnet_controllers/Types.h>
 #include <grid_map_ros/grid_map_ros.hpp>
 
 namespace bobnet_gridmap {
 
-using namespace bobnet_controllers;
+using scalar_t = double;
 
 class StaticLoader {
    public:
     StaticLoader(scalar_t resolution, const std::string &map_frame, const std::string &topic);
-    StaticLoader(const std::string &path, scalar_t resolution, const std::string &map_frame.const std::string &topic);
+    StaticLoader(const std::string &path, scalar_t resolution, const std::string &map_frame, const std::string &topic);
     void load(const std::string &path);
     void publish();
     void publishPeriodically(scalar_t rate);
