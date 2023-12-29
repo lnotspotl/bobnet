@@ -1,13 +1,30 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet_visualization)
 
+set(Torch_DIR "/usr/local/share/torch_cpp/libtorch/share/cmake/Torch")
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    tf
+    urdf
+    kdl_parser
+    robot_state_publisher
+    geometry_msgs
+    bobnet_core
+)
+find_package(Torch REQUIRED)
+
+
+find_package(catkin REQUIRED COMPONENTS
+  ${CATKIN_PACKAGE_DEPENDENCIES}
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -99,10 +116,10 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES bobnet_visualization
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+    INCLUDE_DIRS include
+    LIBRARIES bobnet_visualization
+    CATKIN_DEPENDS roscpp
+   #  DEPENDS system_lib
 )
 
 ###########
@@ -112,14 +129,19 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
+    ${TORCH_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/bobnet_visualization.cpp
-# )
+add_library(bobnet_visualization
+    src/RvizVisualizer.cpp
+    src/anymal_c/AnymalCVisualizer.cpp
+)
+target_link_libraries(bobnet_visualization ${catkin_LIBRARIES}
+${TORCH_LIBRARIES}
+
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -180,6 +202,17 @@ include_directories(
 #   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
 # )
+
+install(
+  TARGETS bobnet_visualization
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES

@@ -6,12 +6,14 @@
 
 #include <memory>
 
-#include <bobnet_controllers/Types.h>
+#include <bobnet_core/State.h>
+#include <bobnet_core/Types.h>
 #include <bobnet_controllers/InverseKinematics.h>
 #include <bobnet_controllers/CentralPatternGenerator.h>
 #include <bobnet_reference/ReferenceGenerator.h>
 #include <bobnet_gridmap/GridmapInterface.h>
 #include <bobnet_controllers/Utils.h>
+#include <bobnet_visualization/anymal_c/AnymalCVisualizer.h>
 
 #include <Eigen/Dense>
 #include <bobnet_msgs/RobotState.h>
@@ -20,23 +22,7 @@
 
 namespace bobnet_controllers {
 
-struct State {
-    using Vector12d = Eigen::Matrix<double, 12, 1>;
-
-    Eigen::Vector3d basePositionWorld;
-    Eigen::Vector4d baseOrientationWorld;  // quaternion, xyzw
-    Eigen::Vector3d baseLinearVelocityBase;
-    Eigen::Vector3d baseAngularVelocityBase;
-    Eigen::Vector3d normalizedGravityBase;
-    Vector12d jointPositions;
-    Vector12d jointVelocities;
-    Eigen::Vector3d lfFootPositionWorld;
-    Eigen::Vector3d lhFootPositionWorld;
-    Eigen::Vector3d rfFootPositionWorld;
-    Eigen::Vector3d rhFootPositionWorld;
-
-    static State fromMessage(const bobnet_msgs::RobotState::ConstPtr stateMsg);
-};
+using namespace bobnet_core;
 
 enum class ControllerType { STAND, RL, NUM_CONTROLLER_TYPES };
 
@@ -116,6 +102,8 @@ class RlController : public Controller {
     size_t VELOCITY_SIZE = 12;
     size_t COMMAND_SIZE = 16;
 
+    bobnet_visualization::AnymalCVisualizer visualizer_;
+
     Module model_;
 
     std::vector<std::string> jointNames_;
@@ -147,6 +135,8 @@ class RlController : public Controller {
     const Slice baseAngularVelocitySlice_ = Slice(9, 12);
     const Slice jointResidualsSlice_ = Slice(12, 24);
     const Slice jointVelocitiesSlice_ = Slice(24, 36);
+    const Slice samplesGTSlice_ = Slice(136, None);
+    const Slice samplesReconstructedSlice_ = Slice(0, 4*52);
 
     std::vector<at::Tensor> historyResiduals_;
     size_t historyResidualsIndex_ = 0;
@@ -156,6 +146,8 @@ class RlController : public Controller {
     size_t historyActionsIndex_ = 0;
 
     std::vector<double> jointAngles2_;
+
+    Eigen::MatrixXd sampled_;
 };
 
 }  // namespace bobnet_controllers

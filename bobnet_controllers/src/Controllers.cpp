@@ -7,25 +7,6 @@ namespace bobnet_controllers {
 /*******************************************************************************/
 /*******************************************************************************/
 /*******************************************************************************/
-State State::fromMessage(const bobnet_msgs::RobotState::ConstPtr stateMsg) {
-    State state;
-    state.basePositionWorld = Eigen::Map<const Eigen::Vector3d>(stateMsg->base_position_world.data());
-    state.baseOrientationWorld = Eigen::Map<const Eigen::Vector4d>(stateMsg->base_orientation_world.data());
-    state.baseLinearVelocityBase = Eigen::Map<const Eigen::Vector3d>(stateMsg->base_lin_vel_b.data());
-    state.baseAngularVelocityBase = Eigen::Map<const Eigen::Vector3d>(stateMsg->base_ang_vel_b.data());
-    state.normalizedGravityBase = Eigen::Map<const Eigen::Vector3d>(stateMsg->normalized_gravity_b.data());
-    state.jointPositions = Eigen::Map<const State::Vector12d>(stateMsg->joint_pos.data());
-    state.jointVelocities = Eigen::Map<const State::Vector12d>(stateMsg->joint_vel.data());
-    state.lfFootPositionWorld = Eigen::Map<const Eigen::Vector3d>(stateMsg->lf_position_world.data());
-    state.lhFootPositionWorld = Eigen::Map<const Eigen::Vector3d>(stateMsg->lh_position_world.data());
-    state.rfFootPositionWorld = Eigen::Map<const Eigen::Vector3d>(stateMsg->rf_position_world.data());
-    state.rhFootPositionWorld = Eigen::Map<const Eigen::Vector3d>(stateMsg->rh_position_world.data());
-    return state;
-}
-
-/*******************************************************************************/
-/*******************************************************************************/
-/*******************************************************************************/
 StandController::StandController(std::vector<std::string> jointNames, std::vector<double> jointAngles, scalar_t kp,
                                  scalar_t kd)
     : jointNames_(jointNames), jointAngles_(jointAngles), kp_(kp), kd_(kd) {}
@@ -80,7 +61,6 @@ ControllerType string2ControllerType(const std::string &type) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &state, scalar_t dt) {
-
     // Do not keep track of gradients
     torch::NoGradGuard no_grad;
 
@@ -123,7 +103,7 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
     // compute ik
     auto legHeights = cpg_->legHeights(phaseOffsetsVec);
     jointAngles2_ = ik_->solve(legHeights);
-    for(int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 12; ++i) {
         jointAngles2_[i] += jointResidualsVec[i];
     }
 
@@ -145,6 +125,9 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
         commandMessage.joint_commands[i].torque_ff = 0.0;
     }
 
+    // visualize
+    visualizer_.visualize(state, sampled_, hidden.index({samplesReconstructedSlice_}));
+
     return commandMessage;
 }
 
@@ -165,20 +148,6 @@ at::Tensor RlController::getNNInput(const State &state, scalar_t dt) {
     fillCpg(input);
     fillHeights(input, state);
 
-    // for(int i = 0; i < 344; ++i) {
-    //     std::cout << input[i].item<double>() << " ";
-    // }
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    // for(int i = 0; i < 12; ++i) {
-    //     std::cout << jointAngles2_[i] << " ";
-    // }
-    // std::cout << std::endl;
-
-    // throw std::runtime_error("stop");
-
     return input;
 }
 
@@ -189,7 +158,7 @@ void RlController::fillCommand(at::Tensor &input, scalar_t dt) {
     auto command = refGen_->getVelocityReference(dt);
     input[0] = command.velocity_x;
     input[1] = command.velocity_y;
-    input[2] = command.yaw_rate * 0.0;
+    input[2] = command.yaw_rate;
 }
 
 /***********************************************************************************************************************/
@@ -223,10 +192,6 @@ void RlController::fillBaseAngularVelocity(at::Tensor &input, const State &state
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void RlController::fillJointResiduals(at::Tensor &input, const State &state) {
-    // compute inverse kinematics
-    // auto legHeights = cpg_->legHeights();
-    // auto nominalJointAngles = ik_->solve(legHeights);
-
     // fill joint residuals
     for (size_t i = 0; i < 12; ++i) {
         input[12 + i] = (state.jointPositions[i] - jointAngles2_[i]) * JOINT_POS_SCALE;
@@ -271,47 +236,37 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
         36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + COMMAND_HISTORY_SIZE * 16 + 8;
 
     // Find yaw angle
-    Eigen::Quaterniond q;
-    q.x() = state.baseOrientationWorld[0];
-    q.y() = state.baseOrientationWorld[1];
-    q.z() = state.baseOrientationWorld[2];
-    q.w() = state.baseOrientationWorld[3];
+    Eigen::Quaterniond q(state.baseOrientationWorld[3], state.baseOrientationWorld[0], state.baseOrientationWorld[1],
+                         state.baseOrientationWorld[2]);
 
-    Eigen::Matrix3d R = q.toRotationMatrix();
-
-    auto rpy = R.eulerAngles(2, 1, 0);
-    double yaw = rpy[0];
+    double yaw = q.toRotationMatrix().eulerAngles(2, 1, 0)[0];
 
     // Rotate sampling points
     Eigen::Matrix3d Ryaw = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()).toRotationMatrix();
     Eigen::MatrixXd rotatedSamplingPoints = Ryaw * gridmap_->samplingPositions_;
-    // Get height at sampling pointsstateMsg_
-    vvs heights;
 
-    auto ff = [&heights, &rotatedSamplingPoints, this](scalar_t x_offset, scalar_t y_offset) {
-        heights.push_back(gridmap_->atPositions(rotatedSamplingPoints, x_offset, y_offset));
+    // Replicate sampling points
+    sampled_ = rotatedSamplingPoints.replicate<1, 4>();
+
+    auto addOffset = [this](scalar_t x_offset, scalar_t y_offset, size_t idx) mutable {
+        size_t blockStart = idx * 52;
+        sampled_.block<1, 52>(0, blockStart).array() += x_offset;
+        sampled_.block<1, 52>(1, blockStart).array() += y_offset;
     };
+    addOffset(state.lfFootPositionWorld[0], state.lfFootPositionWorld[1], 0);
+    addOffset(state.lhFootPositionWorld[0], state.lhFootPositionWorld[1], 1);
+    addOffset(state.rfFootPositionWorld[0], state.rfFootPositionWorld[1], 2);
+    addOffset(state.rhFootPositionWorld[0], state.rhFootPositionWorld[1], 3);
 
-    ff(state.lfFootPositionWorld[0], state.lfFootPositionWorld[1]);
-    ff(state.lhFootPositionWorld[0], state.lhFootPositionWorld[1]);
-    ff(state.rfFootPositionWorld[0], state.rfFootPositionWorld[1]);
-    ff(state.rhFootPositionWorld[0], state.rhFootPositionWorld[1]);
+    // sample heights
+    gridmap_->atPositions(sampled_);
 
-    scalar_t base_height = state.basePositionWorld[2];
+    // clamp third row between -1 and 1
+    sampled_.row(2) = (state.basePositionWorld[2] - sampled_.row(2).array()) - 0.5;
+    sampled_.row(2) = sampled_.row(2).cwiseMax(-1.0).cwiseMin(1.0) * HEIGHT_MEASUREMENTS_SCALE;
 
-    for (size_t i = 0; i < 4; ++i) {
-        for (size_t j = 0; j < 52; ++j) {
-            scalar_t height = heights[i][j];
-            height = base_height - 0.5 - height;
-            if (height < -1.0) {
-                height = -1.0;
-            }
-            if (height > 1.0) {
-                height = 1.0;
-            }
-            input[startIdx + i * 52 + j] = height * HEIGHT_MEASUREMENTS_SCALE;
-        }
-    }
+    auto options = torch::TensorOptions().dtype(torch::kDouble);
+    input.index({Slice(startIdx, None)}) = torch::from_blob(sampled_.data(), {4 * 52}, options);
 }
 
 /***********************************************************************************************************************/

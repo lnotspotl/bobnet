@@ -20,10 +20,13 @@ class GridmapInterface {
 
     inline scalar_t atPosition(scalar_t x, scalar_t y) {
         grid_map::Position position(x, y);
+        if (!map_.isInside(position)) {
+            return 0.0;
+        }
         return map_.atPosition("elevation", position);
     }
 
-    vs atPositions(Eigen::MatrixXd &rotatedSamplingPoints, scalar_t x_offset, scalar_t y_offset);
+    void atPositions(Eigen::MatrixXd &sampled);
     Eigen::MatrixXd samplingPositions_;
 
    private:

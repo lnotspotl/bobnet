@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-#include <bobnet_controllers/Types.h>
+#include <bobnet_core/Types.h>
 
 namespace anymal_c {
 
-using namespace bobnet_controllers;
+using namespace bobnet_core;
 
 struct AnymalCInfo {
     /* Leg Geometry */

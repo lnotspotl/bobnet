@@ -1,8 +1,10 @@
 #pragma once
 
-#include <bobnet_controllers/Types.h>
+#include <bobnet_core/Types.h>
 
 namespace bobnet_controllers {
+
+using namespace bobnet_core;
 
 class CentralPatternGenerator {
    public:

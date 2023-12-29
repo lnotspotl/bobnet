@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <bobnet_core/Types.h>
 #include <ros/ros.h>
 // Ros messages
 #include <sensor_msgs/Joy.h>
@@ -9,13 +10,7 @@
 
 namespace bobnet_reference {
 
-using scalar_t = double;
-
-struct VelocityCommand {
-    scalar_t velocity_x = 0.0;
-    scalar_t velocity_y = 0.0;
-    scalar_t yaw_rate = 0.0;
-};
+using namespace bobnet_core;
 
 class ReferenceGenerator {
    public:

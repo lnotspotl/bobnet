@@ -53,6 +53,8 @@
   <depend>bobnet_msgs</depend>
   <depend>bobnet_reference</depend>
   <depend>bobnet_gridmap</depend>
+  <depend>bobnet_core</depend>
+  <depend>bobnet_visualization</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

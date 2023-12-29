@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     }
 
     auto refPtr = std::unique_ptr<bobnet_reference::JoystickReferenceGenerator>(
-        new bobnet_reference::JoystickReferenceGenerator(nh, "/joy", 0.5, 1, 0, 2, 1.0, 1.0, 1.0));
+        new bobnet_reference::JoystickReferenceGenerator(nh, "/joy", 10.5, 1, 0, 3, 1.0, 1.0, 1.0));
 
     std::string rlModelPath = "";
     if (!nh.getParam("/rl_policy_path", rlModelPath)) {

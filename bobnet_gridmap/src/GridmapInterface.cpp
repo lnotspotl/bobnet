@@ -15,14 +15,12 @@ GridmapInterface::GridmapInterface(ros::NodeHandle &nh, const std::string &topic
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-vs GridmapInterface::atPositions(Eigen::MatrixXd &rotatedSamplingPoints, scalar_t x_offset, scalar_t y_offset) {
-    vs zs(rotatedSamplingPoints.cols());
-    for (int i = 0; i < zs.size(); ++i) {
-        scalar_t x = rotatedSamplingPoints(0, i) + x_offset;
-        scalar_t y = rotatedSamplingPoints(1, i) + y_offset;
-        zs[i] = atPosition(x, y);
+void GridmapInterface::atPositions(Eigen::MatrixXd &sampled) {
+    for (int i = 0; i < sampled.cols(); ++i) {
+        scalar_t x = sampled(0, i);
+        scalar_t y = sampled(1, i);
+        sampled(2, i) = atPosition(x, y);
     }
-    return zs;
 }
 
 /**********************************************************************************************************************/

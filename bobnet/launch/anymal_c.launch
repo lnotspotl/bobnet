@@ -62,4 +62,8 @@
     <!-- Robot interface -->
     <param name="/bobnet/interface_rate" value="50"/>
     <node name="robot_interface" pkg="bobnet" type="anymal_c_main" output="screen"/>
+
+    <!-- Start Rviz visualizer -->
+    <arg name="rvizconfig" default="$(find bobnet)/launch/rviz/anymal_c.rviz" />
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)" output="screen" />
 </launch>

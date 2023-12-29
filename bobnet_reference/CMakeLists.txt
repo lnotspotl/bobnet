@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     sensor_msgs
     geometry_msgs
+    bobnet_core
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,8 +105,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES bobnet_reference
-#  CATKIN_DEPENDS bobnet_controllers
+  LIBRARIES bobnet_reference 
+ CATKIN_DEPENDS bobnet_core
 #  DEPENDS system_lib
 )
 

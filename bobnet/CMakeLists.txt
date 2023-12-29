@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     bobnet_controllers
     bobnet_gridmap
+    robot_state_publisher
 )
 find_package(Torch REQUIRED)
 
