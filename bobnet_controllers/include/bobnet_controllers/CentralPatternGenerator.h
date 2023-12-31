@@ -8,24 +8,24 @@ using namespace bobnet_core;
 
 class CentralPatternGenerator {
    public:
-    CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vs &initial_offset);
+    CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vector_t &initial_offset);
 
     void reset();
     void step(const scalar_t dt);
-    vs computePhases();
-    vs computePhases(vs &phase_offsets);
-    vs getObservation();
+    vector_t computePhases();
+    vector_t computePhases(vector_t &phase_offsets);
+    vector_t getObservation();
 
-    vs legHeights();
-    vs legHeights(vs &phase_offsets);
+    vector_t legHeights();
+    vector_t legHeights(vector_t &phase_offsets);
 
    private:
-    vs computeLegHeights(vs &phases);
+    vector_t computeLegHeights(vector_t &phases);
 
     scalar_t time_;
     scalar_t period_;
     scalar_t swingHeight_;
-    vs timeOffsets_;
+    vector_t timeOffsets_;
 };
 
 }  // namespace bobnet_controllers

@@ -12,7 +12,7 @@ class AnymalCInverseKinematics : public InverseKinematics {
     AnymalCInverseKinematics();
 
    private:
-    vs solve_ik(vvs &footPositions) override;
+    vector_t solve_ik(matrix_t &footPositions) override;
 
     AnymalCInfo info_;
 };

@@ -3,7 +3,7 @@
 
 namespace bobnet_controllers {
 
-CentralPatternGenerator::CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vs &initial_offset)
+CentralPatternGenerator::CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vector_t &initial_offset)
     : period_(period), timeOffsets_(initial_offset), swingHeight_(swingHeight) {
     reset();
 }
@@ -12,9 +12,9 @@ void CentralPatternGenerator::reset() { time_ = 0.0; }
 
 void CentralPatternGenerator::step(const scalar_t dt) { time_ += dt; }
 
-vs CentralPatternGenerator::computePhases() {
+vector_t CentralPatternGenerator::computePhases() {
     // compute current leg time
-    vs phases = timeOffsets_;
+    vector_t phases = timeOffsets_;
     for (size_t i = 0; i < phases.size(); ++i) {
         phases[i] += time_;
         phases[i] = std::fmod(phases[i] / period_, 1.0) * 2 * M_PI;
@@ -22,7 +22,7 @@ vs CentralPatternGenerator::computePhases() {
     return phases;
 }
 
-vs CentralPatternGenerator::computePhases(vs &phase_offsets) {
+vector_t CentralPatternGenerator::computePhases(vector_t &phase_offsets) {
     auto phases = computePhases();
     for (size_t i = 0; i < phases.size(); ++i) {
         phases[i] = std::fmod(phases[i] + phase_offsets[i], 2 * M_PI);
@@ -30,9 +30,9 @@ vs CentralPatternGenerator::computePhases(vs &phase_offsets) {
     return phases;
 }
 
-vs CentralPatternGenerator::getObservation() {
+vector_t CentralPatternGenerator::getObservation() {
     auto phases = computePhases();
-    vs observation(8);
+    vector_t observation(8);
     for (int i = 0; i < 4; ++i) {
         observation[0 + i] = std::cos(phases[i]);
         observation[4 + i] = std::sin(phases[i]);
@@ -40,18 +40,18 @@ vs CentralPatternGenerator::getObservation() {
     return observation;
 }
 
-vs CentralPatternGenerator::legHeights() {
+vector_t CentralPatternGenerator::legHeights() {
     auto phases = computePhases();
     return computeLegHeights(phases);
 }
 
-vs CentralPatternGenerator::legHeights(vs &phase_offsets) {
+vector_t CentralPatternGenerator::legHeights(vector_t &phase_offsets) {
     auto phases = computePhases(phase_offsets);
     return computeLegHeights(phases);
 }
 
-vs CentralPatternGenerator::computeLegHeights(vs &phases) {
-    vs leg_heights(4);
+vector_t CentralPatternGenerator::computeLegHeights(vector_t &phases) {
+    vector_t leg_heights(4);
     for (int i = 0; i < 4; ++i) {
         auto phase = phases[i];
         if (phase <= M_PI / 2) {  // swing - move up

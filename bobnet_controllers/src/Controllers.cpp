@@ -2,12 +2,19 @@
 
 #include <chrono>
 
+#define WARN(x) ROS_WARN_STREAM("[RL controller] " << x);
+
 namespace bobnet_controllers {
+
+
+inline int mod(int a, int b) {
+    return (a % b + b) % b;
+}
 
 /*******************************************************************************/
 /*******************************************************************************/
 /*******************************************************************************/
-StandController::StandController(std::vector<std::string> jointNames, std::vector<double> jointAngles, scalar_t kp,
+StandController::StandController(std::vector<std::string> jointNames, vector_t jointAngles, scalar_t kp,
                                  scalar_t kd)
     : jointNames_(jointNames), jointAngles_(jointAngles), kp_(kp), kd_(kd) {}
 
@@ -90,14 +97,14 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
 
     // unpack action
     at::Tensor phaseOffsets = action.index({Slice(0, 4)});
-    vs phaseOffsetsVec;
+    vector_t phaseOffsetsVec(4);
     for (size_t i = 0; i < 4; ++i) {
-        phaseOffsetsVec.push_back(phaseOffsets[i].item<float>() * ACTION_SCALE);
+        phaseOffsetsVec[i] = (phaseOffsets[i].item<float>() * ACTION_SCALE);
     }
     at::Tensor jointResiduals = action.index({Slice(4, COMMAND_SIZE)});
-    vs jointResidualsVec;
+    vector_t jointResidualsVec(12);
     for (size_t i = 0; i < 12; ++i) {
-        jointResidualsVec.push_back(jointResiduals[i].item<float>() * ACTION_SCALE);
+        jointResidualsVec[i] = (jointResiduals[i].item<float>() * ACTION_SCALE);
     }
 
     // compute ik
@@ -147,7 +154,6 @@ at::Tensor RlController::getNNInput(const State &state, scalar_t dt) {
     fillHistory(input);
     fillCpg(input);
     fillHeights(input, state);
-
     return input;
 }
 
@@ -273,8 +279,9 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void RlController::fillHistoryResiduals(at::Tensor &input) {
-    for (size_t i = 0; i < POSITION_HISTORY_SIZE; ++i) {
-        size_t idx = (historyResidualsIndex_ - 1 + i) % POSITION_HISTORY_SIZE;
+    int ip = mod(historyResidualsIndex_ - 1, POSITION_HISTORY_SIZE);
+    for (int i = 0; i < POSITION_HISTORY_SIZE; ++i) {
+        int idx = mod(ip + i, POSITION_HISTORY_SIZE);
         input.index({Slice(36 + i * 12, 36 + (i + 1) * 12)}) = historyResiduals_[idx];
     }
 }
@@ -283,8 +290,9 @@ void RlController::fillHistoryResiduals(at::Tensor &input) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void RlController::fillHistoryVelocities(at::Tensor &input) {
-    for (size_t i = 0; i < VELOCITY_HISTORY_SIZE; ++i) {
-        size_t idx = (historyVelocitiesIndex_ - 1 + i) % VELOCITY_HISTORY_SIZE;
+    int ip = mod(historyVelocitiesIndex_ - 1, VELOCITY_HISTORY_SIZE);
+    for (int i = 0; i < VELOCITY_HISTORY_SIZE; ++i) {
+        int idx = mod(ip + i, VELOCITY_HISTORY_SIZE);
         input.index({Slice(36 + POSITION_HISTORY_SIZE * 12 + i * 12, 36 + POSITION_HISTORY_SIZE * 12 + (i + 1) * 12)}) =
             historyVelocities_[idx];
     }
@@ -294,8 +302,9 @@ void RlController::fillHistoryVelocities(at::Tensor &input) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void RlController::fillHistoryActions(at::Tensor &input) {
-    for (size_t i = 0; i < COMMAND_HISTORY_SIZE; ++i) {
-        size_t idx = (historyActionsIndex_ - 1 + i) % COMMAND_HISTORY_SIZE;
+    int ip = mod(historyActionsIndex_ - 1, COMMAND_HISTORY_SIZE);
+    for (int i = 0; i < COMMAND_HISTORY_SIZE; ++i) {
+        int idx = mod(ip + i, COMMAND_HISTORY_SIZE);
         input.index({Slice(36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + i * 16,
                            36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + (i + 1) * 16)}) =
             historyActions_[idx];

@@ -6,16 +6,17 @@ namespace anymal_c {
 
 AnymalCInverseKinematics::AnymalCInverseKinematics() { defaultPositions_ = info_.defaultPositions_; }
 
-vs AnymalCInverseKinematics::solve_ik(vvs &footPositions) {
-    std::vector<scalar_t> joint_angles(12);
+vector_t AnymalCInverseKinematics::solve_ik(matrix_t &footPositions) {
+
+    vector_t joint_angles(12);
     for (int i = 0; i < 4; ++i) {
         scalar_t d2 = i < 2 ? info_.d2 : -info_.d2;
         scalar_t a3 = info_.a3;
         scalar_t a4 = info_.a4;
 
-        const scalar_t x = footPositions[i][0];
-        const scalar_t y = footPositions[i][1];
-        const scalar_t z = footPositions[i][2];
+        const scalar_t x = footPositions(i, 0);  
+        const scalar_t y = footPositions(i, 1);  
+        const scalar_t z = footPositions(i, 2);
 
         const scalar_t E = y * y + z * z - d2 * d2;
         const scalar_t E_sqrt = sqrt(E);
@@ -37,6 +38,8 @@ vs AnymalCInverseKinematics::solve_ik(vvs &footPositions) {
         joint_angles[3 * i + 0] = theta1;
         joint_angles[3 * i + 1] = theta3;
         joint_angles[3 * i + 2] = theta4_final;
+
+        joint_angles.segment<3>(3 * i) = (vector3_t() << theta1, theta3, theta4_final).finished();
     }
 
     return joint_angles;

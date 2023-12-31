@@ -14,20 +14,17 @@ struct AnymalCInfo {
     scalar_t a4 = 0.34923;
 
     /* Default foot positions expressed w.r.t hip frame*/
-    vvs defaultPositions_ = {
-        {0.00790786, 0.05720384, -0.573},
-        {-0.00790786, 0.05720384, -0.573},
-        {0.00790786, -0.05720384, -0.573},
-        {-0.00790786, -0.05720384, -0.573},
-    };
+    matrix_t defaultPositions_ = (matrix_t(4, 3) << 0.00790786, 0.05720384, -0.573, -0.00790786, 0.05720384, -0.573,
+                                  0.00790786, -0.05720384, -0.573, -0.00790786, -0.05720384, -0.573)
+                                     .finished();
 
     /* Joint names */
     std::vector<std::string> jointNames{"LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE",
                                         "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"};
 
     /* Default joint angles for stand controller */
-    vs standControllerJointAngles{0.0, 0.4, -0.8 /*LF*/, 0.0, -0.4, 0.8 /*LH*/,
-                                  0.0, 0.4, -0.8 /*RF*/, 0.0, -0.4, 0.8 /*RH*/};
+    vector_t standControllerJointAngles =
+        (vector_t(12) << 0.0, 0.4, -0.8, 0.0, -0.4, 0.8, 0.0, 0.4, -0.8, 0.0, -0.4, 0.8).finished();
 
     /* Swing height */
     scalar_t swingHeight = 0.2;
@@ -36,7 +33,7 @@ struct AnymalCInfo {
     scalar_t cpgPeriod = 0.6;
 
     /* CPG phase offset - LF, LH, RF, RH*/
-    vs cpgPhaseOffsets{0.0, cpgPeriod/2.0, cpgPeriod/2.0, 0.0};
+    vector_t cpgPhaseOffsets = (vector_t(4) << 0.0, cpgPeriod / 2, cpgPeriod / 2, 0.0).finished();
 };
 
 }  // namespace anymal_c

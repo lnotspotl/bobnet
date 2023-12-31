@@ -37,12 +37,12 @@ class Controller {
 
 class StandController : public Controller {
    public:
-    StandController(std::vector<std::string> jointNames, std::vector<double> jointAngles, scalar_t kp, scalar_t kd);
+    StandController(std::vector<std::string> jointNames, vector_t jointAngles, scalar_t kp, scalar_t kd);
     bobnet_msgs::JointCommandArray getCommandMessage(const State &state, scalar_t dt) override;
 
    private:
     std::vector<std::string> jointNames_;
-    std::vector<double> jointAngles_;
+    vector_t jointAngles_;
     scalar_t kp_;
     scalar_t kd_;
 };
@@ -94,13 +94,13 @@ class RlController : public Controller {
     scalar_t ACTION_SCALE = 0.5;
     scalar_t HEIGHT_MEASUREMENTS_SCALE = 5.0;
 
-    size_t POSITION_HISTORY_SIZE = 3;
-    size_t VELOCITY_HISTORY_SIZE = 2;
-    size_t COMMAND_HISTORY_SIZE = 2;
+    int POSITION_HISTORY_SIZE = 3;
+    int VELOCITY_HISTORY_SIZE = 2;
+    int COMMAND_HISTORY_SIZE = 2;
 
-    size_t POSITION_SIZE = 12;
-    size_t VELOCITY_SIZE = 12;
-    size_t COMMAND_SIZE = 16;
+    int POSITION_SIZE = 12;
+    int VELOCITY_SIZE = 12;
+    int COMMAND_SIZE = 16;
 
     bobnet_visualization::AnymalCVisualizer visualizer_;
 
@@ -139,13 +139,13 @@ class RlController : public Controller {
     const Slice samplesReconstructedSlice_ = Slice(0, 4*52);
 
     std::vector<at::Tensor> historyResiduals_;
-    size_t historyResidualsIndex_ = 0;
+    int historyResidualsIndex_ = 0;
     std::vector<at::Tensor> historyVelocities_;
-    size_t historyVelocitiesIndex_ = 0;
+    int historyVelocitiesIndex_ = 0;
     std::vector<at::Tensor> historyActions_;
-    size_t historyActionsIndex_ = 0;
+    int historyActionsIndex_ = 1;
 
-    std::vector<double> jointAngles2_;
+    vector_t jointAngles2_;
 
     Eigen::MatrixXd sampled_;
 };
