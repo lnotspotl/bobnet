@@ -9,6 +9,7 @@ project(bobnet_config)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS 
     roscpp
+    bobnet_core
 )
 
 find_package(yaml-cpp REQUIRED)
@@ -105,7 +106,7 @@ find_package(yaml-cpp REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES bobnet_config
-#  CATKIN_DEPENDS other_catkin_pkg
+ CATKIN_DEPENDS bobnet_core
  DEPENDS yaml-cpp
 )
 

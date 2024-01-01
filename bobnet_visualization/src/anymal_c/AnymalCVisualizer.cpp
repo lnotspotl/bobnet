@@ -20,8 +20,13 @@ void AnymalCVisualizer::visualize(const bobnet_core::State &state, const Eigen::
     ros::Time timeStamp = ros::Time::now();
     publishBaseTransform(timeStamp, state);
     publishJointAngles(timeStamp, state);
-    publishMarkers(timeStamp, sampled, nnPointsReconstructed, state, 0, "gt", false);
-    publishMarkers(timeStamp, sampled, nnPointsReconstructed, state, 2, "nn", true);
+
+    publishMarkers(timeStamp, sampled, 0, "ground_truth",
+                   [&](size_t id) { return -(sampled(2, id) / 5.0 + 0.5 - state.basePositionWorld[2]); });
+    publishMarkers(timeStamp, sampled, 1, "nn_reconstructed", [&](size_t id) {
+        float out = -(nnPointsReconstructed[id].item<float>() / 5.0 + 0.5 - state.basePositionWorld[2]);
+        return static_cast<scalar_t>(out);
+    });
 }
 
 /***********************************************************************************************************************/
@@ -62,8 +67,8 @@ void AnymalCVisualizer::publishJointAngles(ros::Time timeStamp, const bobnet_cor
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
-void AnymalCVisualizer::publishMarkers(ros::Time timeStamp, const Eigen::MatrixXd &sampled, const at::Tensor &points,
-                                       const bobnet_core::State &state, size_t color_idx, const std::string &prefix, bool fromTensor) {
+void AnymalCVisualizer::publishMarkers(ros::Time timeStamp, const Eigen::MatrixXd &sampled, size_t color_idx,
+                                       const std::string &prefix, std::function<scalar_t(size_t)> f) {
     std::vector<std::array<double, 4>> colors = {
         {1.0, 0.0, 0.0, 1.0}, {0.0, 1.0, 0.0, 1.0}, {0.0, 0.0, 1.0, 1.0}, {1.0, 1.0, 0.0, 1.0}};
 
@@ -84,12 +89,7 @@ void AnymalCVisualizer::publishMarkers(ros::Time timeStamp, const Eigen::MatrixX
 
             marker.pose.position.x = sampled(0, id);
             marker.pose.position.y = sampled(1, id);
-
-            if(fromTensor) {
-                marker.pose.position.z = -(points[id].item<float>()/5.0 + 0.5 - state.basePositionWorld[2]);
-            } else {
-                marker.pose.position.z = -(sampled(2, id)/5.0 + 0.5 - state.basePositionWorld[2]);
-            }
+            marker.pose.position.z = f(id);
 
             marker.pose.orientation.x = 0.0;
             marker.pose.orientation.y = 0.0;

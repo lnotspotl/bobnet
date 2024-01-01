@@ -103,7 +103,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES bobnet_core
-  CATKIN_DEPENDS bobnet_msgs
+  CATKIN_DEPENDS bobnet_msgs 
   DEPENDS Eigen
 )
 

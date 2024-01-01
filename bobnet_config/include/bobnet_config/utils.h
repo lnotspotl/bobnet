@@ -4,13 +4,18 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
+#include <Eigen/Dense>
+
 #include <iostream>
 
 #include <ros/ros.h>
 
+#include <bobnet_core/Types.h>
+
 namespace bobnet_config {
 
 using namespace std;
+using namespace bobnet_core;
 
 vector<string> split(const string &s, char delim) {
     vector<string> result;
@@ -23,12 +28,53 @@ vector<string> split(const string &s, char delim) {
 }
 
 template <typename T>
+T parseNode(const YAML::Node &node) {
+    return node.as<T>();
+}
+
+template <>
+matrix_t parseNode(const YAML::Node &node) {
+    if (node.size() == 0 || node[0].size() == 0) {
+        std::cerr << "Cannot parse empty matrix" << std::endl;
+        throw runtime_error("Empty matrix!");
+    }
+
+    matrix_t output(node.size(), node[0].size());
+    for (int i = 0; i < node.size(); i++) {
+        for (int j = 0; j < node[i].size(); j++) {
+            output(i, j) = node[i][j].as<scalar_t>();
+        }
+    }
+    return output;
+}
+
+template <>
+vector_t parseNode(const YAML::Node &node) {
+    if (node.size() == 0) {
+        std::cerr << "Cannot parse empty vector" << std::endl;
+        throw runtime_error("Empty vector!");
+    }
+
+    vector_t output(node.size());
+    for (int i = 0; i < node.size(); i++) {
+        output(i) = node[i].as<scalar_t>();
+    }
+    return output;
+}
+
+template <typename T>
 T fromConfig(const YAML::Node &node, const string &key, const char delim = '/') {
+    if (node.size() == 0) {
+        std::cerr << "Empty config file! Make sure not to use same node twice!" << std::endl;
+        throw runtime_error("Empty config file!");
+    }
+
     YAML::Node component(node);
     for (auto &k : split(key, delim)) {
         component = component[k];
     }
-    return component.as<T>();
+
+    return parseNode<T>(component);
 }
 
 template <typename T>
