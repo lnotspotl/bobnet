@@ -84,7 +84,7 @@ T fromConfigFile(const string &filename, const string &key, const char delim = '
 }
 
 template <typename T>
-T fromRosConfig(const string &key, const char delim = '/') {
+T fromRosConfigFile(const string &key, const char delim = '/') {
     string filename;
     if (!ros::NodeHandle().getParam("/config_file", filename)) {
         ROS_ERROR("Could not get config file path from ROS parameter server!");

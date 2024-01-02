@@ -15,6 +15,8 @@
 
 namespace bobnet_gazebo {
 
+using scalar_t = float;
+
 class JointController : public controller_interface::Controller<hardware_interface::EffortJointInterface> {
    public:
     // Destructor
@@ -37,13 +39,13 @@ class JointController : public controller_interface::Controller<hardware_interfa
     std::unordered_map<std::string, hardware_interface::JointHandle> joint_map;
 
     // joint_name -> joint_limits map
-    std::unordered_map<std::string, std::pair<double, double>> joint_limits;
+    std::unordered_map<std::string, std::pair<scalar_t, scalar_t>> joint_limits;
 
     // command message realtime buffer
     typedef bobnet_msgs::JointCommandArray BufferType;
     realtime_tools::RealtimeBuffer<BufferType> command_buffer;
 
-    std::vector<double> last_joint_angles_;
+    std::vector<scalar_t> last_joint_angles_;
     size_t num_joints_;
     std::unordered_map<std::string, size_t> joint_idxs_;
 };

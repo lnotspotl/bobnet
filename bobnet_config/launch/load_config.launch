@@ -1,0 +1,4 @@
+<launch>
+    <arg name="robot_name" default="anymal_c"/>
+    <param name="config_file" value="$(find bobnet_config)/configs/$(arg robot_name).yaml" />
+</launch>

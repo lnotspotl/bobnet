@@ -16,10 +16,12 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
   realtime_tools
   bobnet_msgs
+  bobnet_config
 )
 
 find_package(gazebo REQUIRED)
 find_package(pinocchio REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -113,9 +115,11 @@ find_package(pinocchio REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES anymal_gazebo
- CATKIN_DEPENDS bobnet_msgs 
+ CATKIN_DEPENDS bobnet_msgs bobnet_config
  DEPENDS pinocchio
 )
+
+
 
 ###########
 ## Build ##
@@ -136,10 +140,10 @@ include_directories(
 # )
 
 add_library(JointController src/JointController.cpp)
-target_link_libraries(JointController ${catkin_LIBRARIES}) 
+target_link_libraries(JointController ${catkin_LIBRARIES} yaml-cpp) 
 
 add_library(StateEstimator src/StateEstimator.cpp)
-target_link_libraries(StateEstimator ${catkin_LIBRARIES} ${gazebo_LIBRARIES} ${pinocchio_LIBRARIES})
+target_link_libraries(StateEstimator ${catkin_LIBRARIES} ${gazebo_LIBRARIES} ${pinocchio_LIBRARIES} yaml-cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

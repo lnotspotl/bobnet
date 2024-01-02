@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
     const std::string stateTopic = "/anymal_c/state";
     const std::string changeControllerTopic = "/anymal_c/changeController";
-    const std::string commandTopic = "/bobnet_gazebo/joint_controller/command";
+    const std::string commandTopic = "anymal_c/command";
 
     scalar_t rate = 50;
     if (!nh.getParam("/bobnet/interface_rate", rate)) {

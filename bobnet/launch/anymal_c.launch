@@ -8,6 +8,11 @@
     <arg name="yaw"                default="0.0"/>
     <arg name="joint_controller_ns" default="anymal_c"/>
 
+    <!-- Load config file -->
+    <include file="$(find bobnet_config)/launch/load_config.launch">
+        <arg name="robot_name" value="anymal_c"/>
+    </include>
+
     <!-- RL controller arguments -->
     <arg name="rl_policy_path"     default="/home/kuba/Downloads/pol.pt"/>
     <param name="rl_policy_path"   value="$(arg rl_policy_path)"/>

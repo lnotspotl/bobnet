@@ -2,30 +2,25 @@
 #include <vector>
 #include <algorithm>
 
+#include <bobnet_config/utils.h>
 #include "bobnet_gazebo/JointController.h"
 
 namespace bobnet_gazebo {
-JointController::~JointController() {
-    // unsubscriber from WBC control command topic
-    command_subscriber.shutdown();
-}
+JointController::~JointController() { command_subscriber.shutdown(); }
 
 bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::NodeHandle &n) {
     ROS_INFO("[Bobnet gazebo joint controller] Initializing joint controller.");
-
-    // get JointConstSharedPtrs
-    const std::string joints_tag = "joints";
-    std::vector<std::string> joint_names;
-    if (!n.getParam(joints_tag, joint_names)) {
-        ROS_ERROR("Could not get joint names! Failed to initialize.");
-        return false;
-    }
 
     urdf::Model urdf;
     if (!urdf.initParam("robot_description")) {
         ROS_ERROR("Could not parse urdf file! Failed to initialize.");
         return false;
     }
+
+    ROS_INFO("[Bobnet gazebo joint controller] Loading joint names from config file.");
+    auto joint_names = bobnet_config::fromRosConfigFile<std::vector<std::string>>("joint_names");
+
+    ROS_INFO("[Bobnet gazebo joint controller] Loading joint limits from config file.");
 
     for (int i = 0; i < joint_names.size(); ++i) {
         auto joint_name = joint_names[i];
@@ -36,7 +31,7 @@ bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::No
             return false;
         }
 
-        std::pair<double, double> joint_limit;
+        std::pair<scalar_t, scalar_t> joint_limit;
         urdf::JointConstSharedPtr joint_urdf = urdf.getJoint(joint_name);
         if (!joint_urdf) {
             ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
@@ -48,8 +43,15 @@ bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::No
         joint_idxs_[joint_name] = i;
     }
 
+    ROS_INFO("[Bobnet gazebo joint controller] Subscribing to command topic.");
+
     // subscribe to WBC control command topic
-    const std::string topic = "/bobnet_gazebo/joint_controller/command";
+    auto baseName = bobnet_config::fromRosConfigFile<std::string>("base_name");
+    ROS_INFO_STREAM("Base name: " << baseName);
+    auto topic = bobnet_config::fromRosConfigFile<std::string>("command_topic");
+
+
+    ROS_INFO_STREAM("Subscribing to " << topic);
     command_subscriber =
         ros::NodeHandle().subscribe<bobnet_msgs::JointCommandArray>(topic, 1, &JointController::command_callback, this);
 
@@ -77,30 +79,33 @@ void JointController::update(const ros::Time &time, const ros::Duration &period)
 
         // get command values
         std::string &joint_name = command.joint_name;
-        double position_desired = command.position_desired;
-        double velocity_desired = command.velocity_desired;
-        double kp = command.kp;
-        double kd = command.kd;
-        double torque_ff = command.torque_ff;
+        scalar_t position_desired = command.position_desired;
+        scalar_t velocity_desired = command.velocity_desired;
+        scalar_t kp = command.kp;
+        scalar_t kd = command.kd;
+        scalar_t torque_ff = command.torque_ff;
 
         // get current values
         hardware_interface::JointHandle &joint = joint_map[joint_name];
-        double position_current = joint.getPosition();
+        scalar_t position_current = joint.getPosition();
 
-        double dt = period.toSec();
+        scalar_t dt = period.toSec();
         size_t joint_index = joint_idxs_[joint_name];
-        double velocity_current = (position_current - last_joint_angles_[joint_index]) / dt;
-
+        scalar_t velocity_current = (position_current - last_joint_angles_[joint_index]) / dt;
         last_joint_angles_[joint_index] = position_current;
-        // double velocity_current = joint.getVelocity();
+        // scalar_t velocity_current = joint.getVelocity();
 
         // compute position and velocity error
-        double position_error = position_desired - position_current;
-        double velocity_error = velocity_desired - velocity_current;
+        scalar_t position_error = position_desired - position_current;
+        scalar_t velocity_error = velocity_desired - velocity_current;
 
         // compute torque command
-        double torque = torque_ff + kp * position_error + kd * velocity_error;
-        torque = std::max(-100.0, std::min(100.0, torque));
+        scalar_t torque = torque_ff + kp * position_error + kd * velocity_error;
+
+        // saturate torque command
+        constexpr scalar_t minTorque = -100.0;
+        constexpr scalar_t maxTorque = 100.0;
+        torque = std::max(minTorque, std::min(maxTorque, torque));
 
         // set joint torque
         joint.setCommand(torque);
