@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
-	<arg name="joint_controller_ns"      default="anymal_c"/>
+	<arg name="robot_name"               default="anymal_c"/>
+	<arg name="robot_ns"      			 default="anymal_c"/>
     <arg name="description_name"         default="robot_description"/>
 	<arg name="gui"					     default="true"/>
 	<arg name="world"					 default="normal"/>
@@ -22,7 +23,7 @@
 	   args="-param $(arg description_name) -urdf -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw) -model robot"/>
 
 	<!-- Start joint controller -->
-	<rosparam file="$(find bobnet_gazebo)/config/controllers.yaml" command="load" />
+	<rosparam file="$(find bobnet_config)/configs/$(arg robot_name).yaml" command="load"/>
 	<node name="controller_spawner" pkg="controller_manager" type="spawner"
-      respawn="false" output="screen" ns="$(arg joint_controller_ns)" args="joint_controller"/>
+      respawn="false" output="screen" ns="$(arg robot_ns)" args="joint_controller"/>
 </launch>

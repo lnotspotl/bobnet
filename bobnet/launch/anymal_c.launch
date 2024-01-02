@@ -38,7 +38,8 @@
     <param name="/bobnet_gazebo/rf_foot" value="RF_FOOT"/>
     <param name="/bobnet_gazebo/rh_foot" value="RH_FOOT"/>
     <include file="$(find bobnet_gazebo)/launch/simulation.launch">
-        <arg name="joint_controller_ns" value="$(arg joint_controller_ns)"/>
+        <arg name="robot_name" value="anymal_c"/>
+        <arg name="robot_ns" value="anymal_c"/>
         <arg name="description_name" value="$(arg description_name)"/>
         <arg name="gui" value="$(arg gui)"/>
         <arg name="world" value="$(arg world)"/>
