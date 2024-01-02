@@ -2,7 +2,7 @@
 
 #include <bobnet_core/Types.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 using namespace bobnet_core;
 
@@ -20,4 +20,4 @@ class InverseKinematics {
     virtual vector_t solve_ik(matrix_t &footPositions) = 0;
 };
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

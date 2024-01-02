@@ -1,11 +1,11 @@
 #pragma once
 
-#include <bobnet_controllers/InverseKinematics.h>
-#include <bobnet_controllers/anymal_c/AnymalCInfo.h>
+#include <bobnet_control/InverseKinematics.h>
+#include <bobnet_control/anymal_c/AnymalCInfo.h>
 
 namespace anymal_c {
 
-using namespace bobnet_controllers;
+using namespace bobnet_control;
 
 class AnymalCInverseKinematics : public InverseKinematics {
    public:

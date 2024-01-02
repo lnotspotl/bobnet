@@ -3,30 +3,30 @@
 
 
 #include <ros/ros.h>
-#include <bobnet_controllers/RobotInterface.h>
-#include <bobnet_controllers/Controllers.h>
-#include <bobnet_controllers/CentralPatternGenerator.h>
+#include <bobnet_control/RobotInterface.h>
+#include <bobnet_control/Controllers.h>
+#include <bobnet_control/CentralPatternGenerator.h>
 #include <bobnet_gridmap/GridmapInterface.h>
 
-#include <bobnet_controllers/anymal_c/AnymalCInfo.h>
-#include <bobnet_controllers/anymal_c/AnymalCInverseKinematics.h>
+#include <bobnet_control/anymal_c/AnymalCInfo.h>
+#include <bobnet_control/anymal_c/AnymalCInverseKinematics.h>
 
-using bobnet_controllers::scalar_t;
+using bobnet_control::scalar_t;
 
 int main(int argc, char *argv[]) {
-    ROS_INFO("Starting bobnet_controllers node");
-    ros::init(argc, argv, "bobnet_controllers");
+    ROS_INFO("Starting bobnet_control node");
+    ros::init(argc, argv, "bobnet_control");
     ros::NodeHandle nh;
 
     anymal_c::AnymalCInfo info;
-    auto ik = std::unique_ptr<bobnet_controllers::InverseKinematics>(new anymal_c::AnymalCInverseKinematics());
-    auto cpg = std::unique_ptr<bobnet_controllers::CentralPatternGenerator>(
-        new bobnet_controllers::CentralPatternGenerator(info.cpgPeriod, info.swingHeight, info.cpgPhaseOffsets));
+    auto ik = std::unique_ptr<bobnet_control::InverseKinematics>(new anymal_c::AnymalCInverseKinematics());
+    auto cpg = std::unique_ptr<bobnet_control::CentralPatternGenerator>(
+        new bobnet_control::CentralPatternGenerator(info.cpgPeriod, info.swingHeight, info.cpgPhaseOffsets));
 
     ROS_INFO("Setup done, starting controller");
 
-    auto standControllerPtr = std::unique_ptr<bobnet_controllers::StandController>(
-        new bobnet_controllers::StandController(info.jointNames, info.standControllerJointAngles, 400, 10));
+    auto standControllerPtr = std::unique_ptr<bobnet_control::StandController>(
+        new bobnet_control::StandController(info.jointNames, info.standControllerJointAngles, 400, 10));
 
     const std::string stateTopic = "/anymal_c/state";
     const std::string changeControllerTopic = "/anymal_c/changeController";
@@ -49,10 +49,10 @@ int main(int argc, char *argv[]) {
         new bobnet_gridmap::GridmapInterface(nh, "/anymal_c/grid_map"));
     gridmapPtr->waitTillInitialized();
 
-    auto rlControllerPtr = std::unique_ptr<bobnet_controllers::RlController>(new bobnet_controllers::RlController(
+    auto rlControllerPtr = std::unique_ptr<bobnet_control::RlController>(new bobnet_control::RlController(
         info.jointNames, 80, 2, std::move(ik), std::move(cpg), std::move(refPtr), std::move(gridmapPtr), rlModelPath));
 
-    bobnet_controllers::RobotInterface interface(stateTopic, changeControllerTopic, commandTopic, rate,
+    bobnet_control::RobotInterface interface(stateTopic, changeControllerTopic, commandTopic, rate,
                                                  std::move(standControllerPtr), std::move(rlControllerPtr));
 
     interface.setup();

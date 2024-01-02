@@ -1,9 +1,9 @@
-#include <bobnet_controllers/CentralPatternGenerator.h>
+#include <bobnet_control/CentralPatternGenerator.h>
 #include <cmath>
 
 #include <iostream>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 CentralPatternGenerator::CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vector_t &initial_offset)
     : period_(period), timeOffsets_(initial_offset), swingHeight_(swingHeight) {
@@ -68,4 +68,4 @@ vector_t CentralPatternGenerator::computeLegHeights(vector_t &phases) {
     return leg_heights;
 }
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

@@ -7,10 +7,10 @@
 #include <bobnet_msgs/RobotState.h>
 #include <std_msgs/String.h>
 
-#include <bobnet_controllers/Controllers.h>
+#include <bobnet_control/Controllers.h>
 #include <Eigen/Dense>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 class RobotInterface {
    public:
@@ -44,4 +44,4 @@ class RobotInterface {
     ros::Rate rate_;
 };
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

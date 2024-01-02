@@ -3,10 +3,10 @@
 #include <string>
 #include <torch/script.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 using torch::jit::script::Module;
 
 Module loadTorchModel(const std::string& modelPath);
 
-}  // namespace bobnet_controllerss
+}  // namespace bobnet_controls

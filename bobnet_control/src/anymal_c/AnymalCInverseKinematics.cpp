@@ -1,4 +1,4 @@
-#include <bobnet_controllers/anymal_c/AnymalCInverseKinematics.h>
+#include <bobnet_control/anymal_c/AnymalCInverseKinematics.h>
 
 #include <cmath>
 

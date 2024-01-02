@@ -11,7 +11,7 @@ add_compile_options(-std=c++17)
 
 find_package(catkin REQUIRED COMPONENTS 
     roscpp
-    bobnet_controllers
+    bobnet_control
     bobnet_gridmap
     robot_state_publisher
 )
@@ -112,7 +112,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES bobnet
- CATKIN_DEPENDS bobnet_controllers roscpp
+ CATKIN_DEPENDS bobnet_control roscpp
 #  DEPENDS system_lib
 )
 

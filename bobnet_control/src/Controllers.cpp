@@ -1,12 +1,12 @@
 #include <pinocchio/fwd.hpp>
-#include <bobnet_controllers/Controllers.h>
+#include <bobnet_control/Controllers.h>
 
 #include <chrono>
 #include <pinocchio/math/rpy.hpp>
 
 #define WARN(x) ROS_WARN_STREAM("[RL controller] " << x);
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 
 inline int mod(int a, int b) {
@@ -366,4 +366,4 @@ void RlController::resetHistory() {
     reset(historyActions_, COMMAND_HISTORY_SIZE, COMMAND_SIZE);
 }
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

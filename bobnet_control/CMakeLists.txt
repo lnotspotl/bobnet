@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(bobnet_controllers)
+project(bobnet_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -111,7 +111,7 @@ find_package(Torch REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES bobnet_controllers
+ LIBRARIES bobnet_control
  CATKIN_DEPENDS roscpp bobnet_msgs bobnet_reference bobnet_core bobnet_visualization
 #  DEPENDS system_lib
 )
@@ -130,7 +130,7 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(bobnet_controllers
+add_library(bobnet_control
     src/Controllers.cpp
     src/RobotInterface.cpp
     src/Utils.cpp
@@ -138,7 +138,7 @@ add_library(bobnet_controllers
     src/CentralPatternGenerator.cpp
     src/anymal_c/AnymalCInverseKinematics.cpp
 )
-target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES})
+target_link_libraries(bobnet_control ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -148,7 +148,7 @@ target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES} 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/bobnet_controllers_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/bobnet_control_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -187,7 +187,7 @@ target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES} 
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS bobnet_controllers
+install(TARGETS bobnet_control
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
@@ -217,7 +217,7 @@ install(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_bobnet_controllers.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_bobnet_control.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

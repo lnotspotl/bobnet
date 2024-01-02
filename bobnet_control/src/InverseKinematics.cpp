@@ -1,6 +1,6 @@
-#include <bobnet_controllers/InverseKinematics.h>
+#include <bobnet_control/InverseKinematics.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 vector_t InverseKinematics::solve(vector_t &legHeightDiffs) {
     matrix_t positions = defaultPositions_;
@@ -23,4 +23,4 @@ vector_t InverseKinematics::solve(vector_t &legHeightDiffs) {
     return out_angles;
 }
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

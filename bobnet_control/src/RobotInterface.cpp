@@ -1,6 +1,6 @@
-#include <bobnet_controllers/RobotInterface.h>
+#include <bobnet_control/RobotInterface.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -77,4 +77,4 @@ void RobotInterface::publishCommand(scalar_t dt) {
     commandPublisher_.publish(commandMsg);
 }
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

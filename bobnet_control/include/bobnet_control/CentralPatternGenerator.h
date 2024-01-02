@@ -2,7 +2,7 @@
 
 #include <bobnet_core/Types.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 using namespace bobnet_core;
 
@@ -28,4 +28,4 @@ class CentralPatternGenerator {
     vector_t timeOffsets_;
 };
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

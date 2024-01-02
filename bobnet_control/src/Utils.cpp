@@ -1,6 +1,6 @@
-#include <bobnet_controllers/Utils.h>
+#include <bobnet_control/Utils.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 Module loadTorchModel(const std::string &modelPath) {
     torch::jit::script::Module model;
@@ -13,4 +13,4 @@ Module loadTorchModel(const std::string &modelPath) {
     return model;
 }
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control

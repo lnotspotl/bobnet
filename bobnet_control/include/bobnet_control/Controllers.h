@@ -8,11 +8,11 @@
 
 #include <bobnet_core/State.h>
 #include <bobnet_core/Types.h>
-#include <bobnet_controllers/InverseKinematics.h>
-#include <bobnet_controllers/CentralPatternGenerator.h>
+#include <bobnet_control/InverseKinematics.h>
+#include <bobnet_control/CentralPatternGenerator.h>
 #include <bobnet_reference/ReferenceGenerator.h>
 #include <bobnet_gridmap/GridmapInterface.h>
-#include <bobnet_controllers/Utils.h>
+#include <bobnet_control/Utils.h>
 #include <bobnet_visualization/anymal_c/AnymalCVisualizer.h>
 
 #include <Eigen/Dense>
@@ -20,7 +20,7 @@
 
 #include <torch/script.h>
 
-namespace bobnet_controllers {
+namespace bobnet_control {
 
 using namespace bobnet_core;
 
@@ -150,4 +150,4 @@ class RlController : public Controller {
     Eigen::MatrixXd sampled_;
 };
 
-}  // namespace bobnet_controllers
+}  // namespace bobnet_control
