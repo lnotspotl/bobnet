@@ -19,9 +19,6 @@ using scalar_t = float;
 
 class JointController : public controller_interface::Controller<hardware_interface::EffortJointInterface> {
    public:
-    // Destructor
-    ~JointController();
-
     // initialize joint controller
     bool init(hardware_interface::EffortJointInterface *hw, ros::NodeHandle &n);
 

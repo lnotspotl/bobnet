@@ -6,8 +6,6 @@
 #include "bobnet_gazebo/JointController.h"
 
 namespace bobnet_gazebo {
-JointController::~JointController() { command_subscriber.shutdown(); }
-
 bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::NodeHandle &n) {
     ROS_INFO("[Bobnet gazebo joint controller] Initializing joint controller.");
 
