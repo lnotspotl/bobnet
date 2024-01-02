@@ -112,8 +112,10 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
 
     // Get base linear velocity expressed in the base frame
     const auto lin_vel_world = baseLinkPtr_->WorldLinearVel();
-    const auto lin_vel_base = quatBase.RotateVectorReverse(lin_vel_world);
-    msg_ref.base_lin_vel_b = {lin_vel_base.X(), lin_vel_base.Y(), lin_vel_base.Z()};
+    Eigen::Vector3d lin_vel_base = {lin_vel_world.X(), lin_vel_world.Y(), lin_vel_world.Z()};
+    lin_vel_base = baseOrientationMat.transpose() * lin_vel_base;
+    // const auto lin_vel_base = quatBase.RotateVectorReverse(lin_vel_world);
+    msg_ref.base_lin_vel_b = {lin_vel_base[0], lin_vel_base[1], lin_vel_base[2]};
 
     // compute angular velocity
     Eigen::Vector3d ang_vel = mat2aa(baseOrientationMat * lastBaseOrientationMat_.transpose()) / dt;
@@ -123,10 +125,9 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
     msg_ref.base_ang_vel_b = {ang_vel_base[0], ang_vel_base[1], ang_vel_base[2]};
 
     // Get normalized gravity vecctor expressed in the base frame
-    const ignition::math::Vector3d normalized_gravity_world = {0.0, 0.0, -1.0};
-    const auto normalized_gravity_base = quatBase.RotateVectorReverse(normalized_gravity_world);
-    msg_ref.normalized_gravity_b = {normalized_gravity_base.X(), normalized_gravity_base.Y(),
-                                    normalized_gravity_base.Z()};
+    Eigen::Vector3d normalized_gravity = {0, 0, -1.0};
+    normalized_gravity = baseOrientationMat.transpose() * normalized_gravity;
+    msg_ref.normalized_gravity_b = {normalized_gravity[0], normalized_gravity[1], normalized_gravity[2]};
 
     // Get joint positions
     for (size_t i = 0; i < joints_.size(); ++i) {

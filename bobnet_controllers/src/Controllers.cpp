@@ -1,6 +1,8 @@
+#include <pinocchio/fwd.hpp>
 #include <bobnet_controllers/Controllers.h>
 
 #include <chrono>
+#include <pinocchio/math/rpy.hpp>
 
 #define WARN(x) ROS_WARN_STREAM("[RL controller] " << x);
 
@@ -253,7 +255,7 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
     Eigen::Quaterniond q(state.baseOrientationWorld[3], state.baseOrientationWorld[0], state.baseOrientationWorld[1],
                          state.baseOrientationWorld[2]);
 
-    double yaw = q.toRotationMatrix().eulerAngles(2, 1, 0)[0];
+    double yaw = pinocchio::rpy::matrixToRpy(q.toRotationMatrix())[2];
 
     // Rotate sampling points
     Eigen::Matrix3d Ryaw = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()).toRotationMatrix();

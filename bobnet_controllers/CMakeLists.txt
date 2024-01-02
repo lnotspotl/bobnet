@@ -17,6 +17,7 @@ bobnet_gridmap
 bobnet_core
 bobnet_visualization
 )
+find_package(pinocchio REQUIRED)
 find_package(Torch REQUIRED)
 
 ## System dependencies are found with CMake's conventions
@@ -125,6 +126,7 @@ include_directories(
     include
     ${catkin_INCLUDE_DIRS}
     ${TORCH_INCLUDE_DIRS}
+    ${pinocchio_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -136,7 +138,7 @@ add_library(bobnet_controllers
     src/CentralPatternGenerator.cpp
     src/anymal_c/AnymalCInverseKinematics.cpp
 )
-target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES})
+target_link_libraries(bobnet_controllers ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
