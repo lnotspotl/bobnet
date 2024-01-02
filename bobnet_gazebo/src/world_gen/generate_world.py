@@ -22,7 +22,7 @@ def parse_args():
 
 def generate_stairs():
     STEPS = 10
-    STEP_HEIGHT = 0.16
+    STEP_HEIGHT = 0.20
     STEP_WIDTH = 5.7
     STEP_DEPTH = 0.30
 

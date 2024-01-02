@@ -83,18 +83,8 @@ T fromConfigFile(const string &filename, const string &key, const char delim = '
     return fromConfig<T>(node, key, delim);
 }
 
-YAML::Node loadRosConfigFile() {
-    string filename;
-    if (!ros::NodeHandle().getParam("/config_file", filename)) {
-        ROS_ERROR("Could not get config file path from ROS parameter server!");
-        throw runtime_error("Could not get config file path from ROS parameter server!");
-    }
-    YAML::Node node = YAML::LoadFile(filename);
-    return node;
-}
-
 template <typename T>
-T fromRosConfigFile(const string &key, const char delim = '/') {
+T fromRosConfig(const string &key, const char delim = '/') {
     string filename;
     if (!ros::NodeHandle().getParam("/config_file", filename)) {
         ROS_ERROR("Could not get config file path from ROS parameter server!");
