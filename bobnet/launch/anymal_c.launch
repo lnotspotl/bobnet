@@ -9,7 +9,7 @@
     <arg name="joint_controller_ns" default="anymal_c"/>
 
     <!-- RL controller arguments -->
-    <arg name="rl_policy_path"     default="/home/kuba/Downloads/distilled_policy_jittable.pt_jitted.pt"/>
+    <arg name="rl_policy_path"     default="/home/kuba/Downloads/pol.pt"/>
     <param name="rl_policy_path"   value="$(arg rl_policy_path)"/>
 
     <!-- Reference arguments -->

@@ -81,7 +81,7 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
 
     // perform forward pass
     auto ts3 = std::chrono::high_resolution_clock::now();
-    at::Tensor out = model_.forward({nnInput.view({1, getNNInputSize()})}).toTensor();
+    at::Tensor out = model_.forward({nnInput.view({1, getNNInputSize()})}).toTensor().squeeze();
     auto t4 = std::chrono::high_resolution_clock::now();
 
     ROS_INFO_STREAM_THROTTLE(
@@ -101,6 +101,8 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
     for (size_t i = 0; i < 4; ++i) {
         phaseOffsetsVec[i] = (phaseOffsets[i].item<float>() * ACTION_SCALE);
     }
+
+    // std::cout << phaseOffsetsVec.transpose() << std::endl << std::endl;
     at::Tensor jointResiduals = action.index({Slice(4, COMMAND_SIZE)});
     vector_t jointResidualsVec(12);
     for (size_t i = 0; i < 12; ++i) {
@@ -114,11 +116,6 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
         jointAngles2_[i] += jointResidualsVec[i];
     }
 
-    // update central pattern generator
-    cpg_->step(dt);
-
-    // update history buffer
-    updateHistory(nnInput, action);
 
     // generate command message
     bobnet_msgs::JointCommandArray commandMessage;
@@ -131,6 +128,17 @@ bobnet_msgs::JointCommandArray RlController::getCommandMessage(const State &stat
         commandMessage.joint_commands[i].kd = kd_;
         commandMessage.joint_commands[i].torque_ff = 0.0;
     }
+
+    legHeights = cpg_->legHeights();
+    jointAngles2_ = ik_->solve(legHeights);
+    for (int i = 0; i < 12; ++i) {
+        jointAngles2_[i] += jointResidualsVec[i];
+    }
+
+    // update history buffer
+    updateHistory(nnInput, action);
+    // update central pattern generator
+    cpg_->step(dt);
 
     // visualize
     visualizer_.visualize(state, sampled_, hidden.index({samplesReconstructedSlice_}));
@@ -268,11 +276,22 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
     gridmap_->atPositions(sampled_);
 
     // clamp third row between -1 and 1
-    sampled_.row(2) = (state.basePositionWorld[2] - sampled_.row(2).array()) - 0.5;
-    sampled_.row(2) = sampled_.row(2).cwiseMax(-1.0).cwiseMin(1.0) * HEIGHT_MEASUREMENTS_SCALE;
+    // sampled_.row(2) = (state.basePositionWorld[2] - sampled_.row(2).array()).array() - 0.5;
+    // sampled_.row(2) = sampled_.row(2).cwiseMax(-1.0).cwiseMin(1.0) * HEIGHT_MEASUREMENTS_SCALE;
 
-    auto options = torch::TensorOptions().dtype(torch::kDouble);
-    input.index({Slice(startIdx, None)}) = torch::from_blob(sampled_.data(), {4 * 52}, options);
+    // auto options = torch::TensorOptions().dtype(torch::kDouble);
+    // input.index({Slice(startIdx, None)}) = torch::from_blob(sampled_.row(2).data(), {4 * 52}, options);
+
+    for(int i = 0; i < 4*52; ++i) {
+        float out = state.basePositionWorld[2] - 0.5 - sampled_(2, i);
+        if (out > 1.0) {
+            out = 1.0;
+        } else if (out < -1.0) {
+            out = -1.0;
+        }
+
+        input[startIdx + i] = out * HEIGHT_MEASUREMENTS_SCALE;
+    }
 }
 
 /***********************************************************************************************************************/

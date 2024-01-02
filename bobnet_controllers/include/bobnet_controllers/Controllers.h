@@ -92,7 +92,7 @@ class RlController : public Controller {
     scalar_t JOINT_POS_SCALE = 1.0;
     scalar_t JOINT_VEL_SCALE = 0.05;
     scalar_t ACTION_SCALE = 0.5;
-    scalar_t HEIGHT_MEASUREMENTS_SCALE = 5.0;
+    scalar_t HEIGHT_MEASUREMENTS_SCALE = 1.0;
 
     int POSITION_HISTORY_SIZE = 3;
     int VELOCITY_HISTORY_SIZE = 2;

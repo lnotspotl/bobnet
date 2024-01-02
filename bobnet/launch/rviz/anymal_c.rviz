@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /GridMap1
         - /TF1/Frames1
+        - /MarkerArray1
         - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.5
     Tree Height: 719
@@ -731,14 +732,14 @@ Visualization Manager:
       Marker Topic: /visualization_marker
       Name: MarkerArray
       Namespaces:
-        gt_sampled_points_0: true
-        gt_sampled_points_1: false
-        gt_sampled_points_2: false
-        gt_sampled_points_3: false
-        nn_sampled_points_0: true
-        nn_sampled_points_1: false
-        nn_sampled_points_2: false
-        nn_sampled_points_3: false
+        ground_truth_sampled_points_0: true
+        ground_truth_sampled_points_1: false
+        ground_truth_sampled_points_2: false
+        ground_truth_sampled_points_3: false
+        nn_reconstructed_sampled_points_0: true
+        nn_reconstructed_sampled_points_1: false
+        nn_reconstructed_sampled_points_2: false
+        nn_reconstructed_sampled_points_3: false
       Queue Size: 100
       Value: true
   Enabled: true
@@ -769,7 +770,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.1457462310791016
+      Distance: 6.407697677612305
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
