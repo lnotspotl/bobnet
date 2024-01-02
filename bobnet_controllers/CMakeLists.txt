@@ -1,22 +1,21 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet_controllers)
 
-
-set(Torch_DIR "/usr/local/share/torch_cpp/libtorch/share/cmake/Torch")
-
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    bobnet_msgs
-    bobnet_reference
-    bobnet_gridmap
-    bobnet_core
-    bobnet_visualization
+roscpp
+bobnet_msgs
+bobnet_reference
+bobnet_gridmap
+bobnet_core
+bobnet_visualization
 )
 find_package(Torch REQUIRED)
 

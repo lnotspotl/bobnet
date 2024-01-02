@@ -291,6 +291,7 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
         }
 
         input[startIdx + i] = out * HEIGHT_MEASUREMENTS_SCALE;
+        sampled_(2, i) = out;
     }
 }
 

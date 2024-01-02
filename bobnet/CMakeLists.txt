@@ -1,23 +1,24 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet)
 
-set(Torch_DIR "/usr/local/share/torch_cpp/libtorch/share/cmake/Torch")
-
-
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS 
     roscpp
     bobnet_controllers
     bobnet_gridmap
     robot_state_publisher
 )
+
 find_package(Torch REQUIRED)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -111,7 +112,7 @@ find_package(Torch REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES bobnet
- CATKIN_DEPENDS bobnet_controllers
+ CATKIN_DEPENDS bobnet_controllers roscpp
 #  DEPENDS system_lib
 )
 
@@ -122,10 +123,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-${catkin_INCLUDE_DIRS}
-${TORCH_INCLUDE_DIRS}
-
+    ${catkin_INCLUDE_DIRS}
+    ${TORCH_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library

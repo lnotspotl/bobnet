@@ -1,8 +1,8 @@
 #include <memory>
 #include <string>
 
-#include <ros/ros.h>
 
+#include <ros/ros.h>
 #include <bobnet_controllers/RobotInterface.h>
 #include <bobnet_controllers/Controllers.h>
 #include <bobnet_controllers/CentralPatternGenerator.h>

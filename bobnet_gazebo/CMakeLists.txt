@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bobnet_gazebo)
 
-set (CMAKE_CXX_STANDARD 17)
+#set (CMAKE_CXX_STANDARD 17)
+add_compile_options(-std=c++17)
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
