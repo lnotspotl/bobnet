@@ -1,1 +1,2 @@
-bobnet_gazebo/launch/worlds/custom/
+bobnet_gazebo/launch/worlds/custom/*
+__pycache__/
