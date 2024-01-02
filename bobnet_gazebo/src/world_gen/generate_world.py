@@ -52,9 +52,9 @@ def generate_box():
 
 def generate_random_blocks():
     BLOCK_HEIGHT = 0.4
-    BLOCK_DEPTH = 1.6
-    BLOCK_WIDTH = 1.6
-    BLOCKS = 20
+    BLOCK_DEPTH = 0.5
+    BLOCK_WIDTH = 0.5
+    BLOCKS = 60
 
     import random
 
@@ -64,7 +64,7 @@ def generate_random_blocks():
     
     for i in range(BLOCKS):
         x = random.uniform(0, 3)
-        y = random.uniform(0, 3)
+        y = random.uniform(-3, 3)
         z = random.uniform(-BLOCK_HEIGHT, 0.0)
         p = [x, y, z]
         s = [BLOCK_DEPTH, BLOCK_WIDTH, BLOCK_HEIGHT]
