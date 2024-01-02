@@ -1,6 +1,7 @@
 #include "pinocchio/algorithm/joint-configuration.hpp"
 #include "pinocchio/algorithm/frames.hpp"
 #include "pinocchio/parsers/urdf.hpp"
+#include <bobnet_config/utils.h>
 
 #include <bobnet_gazebo/StateEstimator.h>
 
@@ -18,46 +19,39 @@ void StateEstimator::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
 
     // setup ROS publisher
     ros::NodeHandle nh;
-    std::string stateTopic = robot->GetName() + "/state";
-    if (!nh.getParam("/bobnet_gazebo/state_topic", stateTopic)) {
-        ROS_WARN_STREAM("No state topic specified for " << robot->GetName() << ", using default: " << stateTopic);
-    }
+    auto stateTopic = bobnet_config::fromRosConfigFile<std::string>("state_topic");
+    ROS_INFO_STREAM("Publishing state to " << stateTopic);
     statePublisher_ = nh.advertise<bobnet_msgs::RobotState>(stateTopic, 2);
 
     // get baselink name
-    std::string baseLinkName = "base_link";
-    if (!nh.getParam("/bobnet_gazebo/base_link", baseLinkName)) {
-        ROS_WARN_STREAM("No base link specified for " << robot->GetName() << ", using default: " << baseLinkName);
-    }
+    auto baseName = bobnet_config::fromRosConfigFile<std::string>("base_name");
+
+    ROS_INFO_STREAM("Base name: " << baseName);
 
     // get baselink ptr
-    baseLinkPtr_ = robot->GetChildLink(baseLinkName);
+    baseLinkPtr_ = robot->GetChildLink(baseName);
 
+    ROS_INFO_STREAM("Reading update rate");
     // get update rate
-    updateRate_ = 100.0;
-    if (!nh.getParam("/bobnet_gazebo/state_update_rate", updateRate_)) {
-        ROS_WARN_STREAM("No update rate specified for " << robot->GetName() << ", using default: " << updateRate_);
-    }
+    updateRate_ = bobnet_config::fromRosConfigFile<scalar_t>("state_estimator/update_rate");
 
-    // Load foot names
-    auto loadFootName = [&nh](std::string &footName, const std::string &defaultName, const std::string &footNameParam) {
-        if (!nh.getParam(footNameParam, footName)) {
-            ROS_WARN_STREAM("No footname specified for " << defaultName << ", using default: " << defaultName);
-            footName = defaultName;
-        }
-    };
-    loadFootName(lf_name_, "LF_FOOT", "/bobnet_gazebo/lf_foot");
-    loadFootName(lh_name_, "LH_FOOT", "/bobnet_gazebo/lh_foot");
-    loadFootName(rf_name_, "RF_FOOT", "/bobnet_gazebo/rf_foot");
-    loadFootName(rh_name_, "RH_FOOT", "/bobnet_gazebo/rh_foot");
+    auto footNames = bobnet_config::fromRosConfigFile<std::vector<std::string>>("foot_names");
+    lf_name_ = footNames[0];
+    lh_name_ = footNames[1];
+    rf_name_ = footNames[2];
+    rh_name_ = footNames[3];
 
     // prepare pinocchio model
     std::string urdfString;
     nh.getParam("/robot_description", urdfString);
     ROS_INFO_STREAM("Loading URDF for " << robot->GetName());
-    pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), model_);
+
+    // Load Model 
+    pinocchio::Model m;
+    pinocchio::urdf::buildModelFromXML(urdfString, pinocchio::JointModelFreeFlyer(), m);
+    model_ = m.cast<scalar_t>();
     ROS_INFO_STREAM("Loaded URDF for " << robot->GetName());
-    data_ = pinocchio::Data(model_);
+    data_ = pinocchio::DataTpl<scalar_t>(model_);
 
     // load joint pointers
     joints_.clear();
@@ -76,9 +70,9 @@ void StateEstimator::Load(physics::ModelPtr robot, sdf::ElementPtr sdf) {
 /******************************************************************************/
 void StateEstimator::OnUpdate() {
     common::Time currentSimTime = robot_->GetWorld()->SimTime();
-    double dt = (currentSimTime - lastSimTime_).Double();
+    scalar_t dt = cast_dt(currentSimTime - lastSimTime_);
 
-    if (dt < 1.0 / updateRate_) {
+    if (dt < static_cast<scalar_t>(1.0) / updateRate_) {
         return;
     }
 
@@ -92,7 +86,7 @@ void StateEstimator::OnUpdate() {
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
-void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
+void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, scalar_t dt) {
     auto &msg_ref = msg;
 
     // base link world position
@@ -103,8 +97,7 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
     // base link world orientation
     auto quatBase = baseLinkPose.Rot();
     msg_ref.base_orientation_world = {quatBase.X(), quatBase.Y(), quatBase.Z(), quatBase.W()};
-    auto baseOrientationMat =
-        Eigen::Quaterniond(quatBase.W(), quatBase.X(), quatBase.Y(), quatBase.Z()).toRotationMatrix();
+    auto baseOrientationMat = Quaternion(quatBase.W(), quatBase.X(), quatBase.Y(), quatBase.Z()).toRotationMatrix();
     if (firstUpdate_) {
         lastBaseOrientationMat_ = baseOrientationMat;
         firstUpdate_ = false;
@@ -112,22 +105,21 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
 
     // Get base linear velocity expressed in the base frame
     const auto lin_vel_world = baseLinkPtr_->WorldLinearVel();
-    Eigen::Vector3d lin_vel_base = {lin_vel_world.X(), lin_vel_world.Y(), lin_vel_world.Z()};
-    lin_vel_base = baseOrientationMat.transpose() * lin_vel_base;
-    // const auto lin_vel_base = quatBase.RotateVectorReverse(lin_vel_world);
-    msg_ref.base_lin_vel_b = {lin_vel_base[0], lin_vel_base[1], lin_vel_base[2]};
+    const auto lin_vel_base = quatBase.RotateVectorReverse(lin_vel_world);
+    msg_ref.base_lin_vel_b = {lin_vel_base.X(), lin_vel_base.Y(), lin_vel_base.Z()};
 
     // compute angular velocity
-    Eigen::Vector3d ang_vel = mat2aa(baseOrientationMat * lastBaseOrientationMat_.transpose()) / dt;
+    Vector3 ang_vel = mat2aa(baseOrientationMat * lastBaseOrientationMat_.transpose()) / dt;
 
     // Express angular velocity in the base frame
     const auto ang_vel_base = baseOrientationMat.transpose() * ang_vel;
     msg_ref.base_ang_vel_b = {ang_vel_base[0], ang_vel_base[1], ang_vel_base[2]};
 
     // Get normalized gravity vecctor expressed in the base frame
-    Eigen::Vector3d normalized_gravity = {0, 0, -1.0};
-    normalized_gravity = baseOrientationMat.transpose() * normalized_gravity;
-    msg_ref.normalized_gravity_b = {normalized_gravity[0], normalized_gravity[1], normalized_gravity[2]};
+    const ignition::math::Vector3d normalized_gravity_world = {0.0, 0.0, -1.0};
+    const auto normalized_gravity_base = quatBase.RotateVectorReverse(normalized_gravity_world);
+    msg_ref.normalized_gravity_b = {normalized_gravity_base.X(), normalized_gravity_base.Y(),
+                                    normalized_gravity_base.Z()};
 
     // Get joint positions
     for (size_t i = 0; i < joints_.size(); ++i) {
@@ -142,15 +134,15 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
 
     // Get joint velocities
     for (int i = 0; i < joints_.size(); ++i) {
-        double current_angle = msg_ref.joint_pos[i];
-        double last_angle = lastJointAngles_[i];
-        double velocity = (current_angle - last_angle) / dt;
+        scalar_t current_angle = msg_ref.joint_pos[i];
+        scalar_t last_angle = lastJointAngles_[i];
+        scalar_t velocity = (current_angle - last_angle) / dt;
         msg_ref.joint_vel[i] = velocity;
         lastJointAngles_[i] = current_angle;
     }
 
     // compute forward kinematics
-    Eigen::VectorXd q(model_.nq);
+    VectorX q(model_.nq);
     q[0] = posBase.X();
     q[1] = posBase.Y();
     q[2] = posBase.Z();
@@ -183,8 +175,8 @@ void StateEstimator::fillStateMsg(bobnet_msgs::RobotState &msg, double dt) {
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
-Eigen::Vector3d StateEstimator::mat2aa(const Eigen::Matrix3d &R) {
-    Eigen::AngleAxisd aa(R);
+Vector3 StateEstimator::mat2aa(const Matrix3 &R) {
+    AngleAxis aa(R);
     return aa.axis() * aa.angle();
 }
 

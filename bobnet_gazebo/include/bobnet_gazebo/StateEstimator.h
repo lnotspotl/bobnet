@@ -22,16 +22,27 @@
 
 namespace gazebo {
 
+using scalar_t = float;
+using Vector3 = Eigen::Matrix<scalar_t, 3, 1>;
+using Matrix3 = Eigen::Matrix<scalar_t, 3, 3>;
+using VectorX = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
+using AngleAxis = Eigen::AngleAxis<scalar_t>;
+using Quaternion = Eigen::Quaternion<scalar_t>;
+
 class StateEstimator : public ModelPlugin {
    public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr sdf);
     void OnUpdate();
 
    private:
-    void fillStateMsg(bobnet_msgs::RobotState &msg, double dt);
+    void fillStateMsg(bobnet_msgs::RobotState &msg, scalar_t dt);
+
+    inline scalar_t cast_dt(const common::Time &t_diff) {
+        return static_cast<scalar_t>(t_diff.sec) + static_cast<scalar_t>(t_diff.nsec) * 1e-9;
+    }
 
     /* Convert a rotation matrix to its angle-axis representation */
-    Eigen::Vector3d mat2aa(const Eigen::Matrix3d &R);
+    Vector3 mat2aa(const Matrix3 &R);
 
     // callback function for Gazebo
     event::ConnectionPtr updateConnection;
@@ -46,11 +57,11 @@ class StateEstimator : public ModelPlugin {
 
     // joint pointers
     std::vector<physics::JointPtr> joints_;
-    std::vector<double> lastJointAngles_;
+    std::vector<scalar_t> lastJointAngles_;
 
     // pinocchio model
-    pinocchio::Model model_;
-    pinocchio::Data data_;
+    pinocchio::ModelTpl<scalar_t> model_;
+    pinocchio::DataTpl<scalar_t> data_;
 
     std::string lf_name_;
     std::string rf_name_;
@@ -58,12 +69,12 @@ class StateEstimator : public ModelPlugin {
     std::string rh_name_;
 
     // update rate
-    double updateRate_;
+    scalar_t updateRate_;
 
     bool firstUpdate_ = true;
 
     // last yaw angle
-    Eigen::Matrix3d lastBaseOrientationMat_;
+    Matrix3 lastBaseOrientationMat_;
     common::Time lastSimTime_;
 };
 

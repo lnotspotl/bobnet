@@ -30,13 +30,6 @@
     <param name="$(arg description_name)" textfile="$(arg urdfFile)"/>
 
     <!-- Start Gazebo simulation -->
-    <param name="/bobnet_gazebo/state_topic" value="/anymal_c/state"/>
-    <param name="/bobnet_gazebo/state_update_rate" value="400"/>
-    <param name="/bobnet_gazebo/base_link" value="base"/>
-    <param name="/bobnet_gazebo/lf_foot" value="LF_FOOT"/>
-    <param name="/bobnet_gazebo/lh_foot" value="LH_FOOT"/>
-    <param name="/bobnet_gazebo/rf_foot" value="RF_FOOT"/>
-    <param name="/bobnet_gazebo/rh_foot" value="RH_FOOT"/>
     <include file="$(find bobnet_gazebo)/launch/simulation.launch">
         <arg name="robot_name" value="anymal_c"/>
         <arg name="robot_ns" value="anymal_c"/>
