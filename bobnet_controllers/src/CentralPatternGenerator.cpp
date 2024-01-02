@@ -1,6 +1,8 @@
 #include <bobnet_controllers/CentralPatternGenerator.h>
 #include <cmath>
 
+#include <iostream>
+
 namespace bobnet_controllers {
 
 CentralPatternGenerator::CentralPatternGenerator(scalar_t period, scalar_t swingHeight, const vector_t &initial_offset)
@@ -13,30 +15,28 @@ void CentralPatternGenerator::reset() { time_ = 0.0; }
 void CentralPatternGenerator::step(const scalar_t dt) { time_ += dt; }
 
 vector_t CentralPatternGenerator::computePhases() {
-    // compute current leg time
     vector_t phases = timeOffsets_;
-    for (size_t i = 0; i < phases.size(); ++i) {
-        phases[i] += time_;
-        phases[i] = std::fmod(phases[i] / period_, 1.0) * 2 * M_PI;
-    }
+
+    // Essentially compute ((time + offset) / period % 1) * 2 * pi for all legs
+    phases.array() += time_;
+    phases.array() /= period_;
+    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, 1.0); });
+    phases.array() *= 2 * M_PI;
     return phases;
 }
 
 vector_t CentralPatternGenerator::computePhases(vector_t &phase_offsets) {
     auto phases = computePhases();
-    for (size_t i = 0; i < phases.size(); ++i) {
-        phases[i] = std::fmod(phases[i] + phase_offsets[i], 2 * M_PI);
-    }
+    phases = phases.array() + phase_offsets.array();
+    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, 2 * M_PI); });
     return phases;
 }
 
 vector_t CentralPatternGenerator::getObservation() {
     auto phases = computePhases();
     vector_t observation(8);
-    for (int i = 0; i < 4; ++i) {
-        observation[0 + i] = std::cos(phases[i]);
-        observation[4 + i] = std::sin(phases[i]);
-    }
+    observation.head<4>() = phases.array().cos();
+    observation.tail<4>() = phases.array().sin();
     return observation;
 }
 
