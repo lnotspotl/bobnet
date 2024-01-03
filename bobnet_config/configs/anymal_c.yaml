@@ -6,8 +6,9 @@ base_name: "base"
 
 state_topic: "anymal_c/state"
 command_topic: "anymal_c/command"
-gridmap_topic: "anymal_c/gridmap"
+gridmap_topic: "anymal_c/grid_map"
 change_controller_topic: "anymal_c/change_controller"
+marker_topic: "markers"
 rviz_visualize: true
 
 gridmap_resolution: 0.06 # m
@@ -27,7 +28,7 @@ static_controller:
   kd: 5
   interpolation_time: 1.0 # s
 
-rl_controller:
+bob_controller:
   kp: 80.0
   kd: 2.0
 
@@ -46,6 +47,7 @@ rl_controller:
   cpg:
     period: 0.6
     time_offsets: [0.0, 0.3, 0.3, 0.0]  # LF, LH, RF, RH
+    swing_height: 0.2
 
 anymal_c:
   joint_controller:

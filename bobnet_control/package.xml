@@ -55,6 +55,7 @@
   <depend>bobnet_gridmap</depend>
   <depend>bobnet_core</depend>
   <depend>bobnet_visualization</depend>
+  <depend>bobnet_config</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

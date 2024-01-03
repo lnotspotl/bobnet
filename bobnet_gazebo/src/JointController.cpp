@@ -2,7 +2,6 @@
 #include <vector>
 #include <algorithm>
 
-#include <bobnet_config/utils.h>
 #include "bobnet_gazebo/JointController.h"
 
 namespace bobnet_gazebo {

@@ -17,7 +17,10 @@ namespace bobnet_config {
 using namespace std;
 using namespace bobnet_core;
 
-vector<string> split(const string &s, char delim) {
+
+// TODO: Everything is inline, can we move it to .cpp file and generate a library?
+
+inline vector<string> split(const string &s, char delim) {
     vector<string> result;
     stringstream ss(s);
     string item;
@@ -28,12 +31,12 @@ vector<string> split(const string &s, char delim) {
 }
 
 template <typename T>
-T parseNode(const YAML::Node &node) {
+inline T parseNode(const YAML::Node &node) {
     return node.as<T>();
 }
 
 template <>
-matrix_t parseNode(const YAML::Node &node) {
+inline matrix_t parseNode(const YAML::Node &node) {
     if (node.size() == 0 || node[0].size() == 0) {
         std::cerr << "Cannot parse empty matrix" << std::endl;
         throw runtime_error("Empty matrix!");
@@ -49,7 +52,7 @@ matrix_t parseNode(const YAML::Node &node) {
 }
 
 template <>
-vector_t parseNode(const YAML::Node &node) {
+inline vector_t parseNode(const YAML::Node &node) {
     if (node.size() == 0) {
         std::cerr << "Cannot parse empty vector" << std::endl;
         throw runtime_error("Empty vector!");
@@ -63,7 +66,7 @@ vector_t parseNode(const YAML::Node &node) {
 }
 
 template <typename T>
-T fromConfig(const YAML::Node &node, const string &key, const char delim = '/') {
+inline T fromConfig(const YAML::Node &node, const string &key, const char delim = '/') {
     if (node.size() == 0) {
         std::cerr << "Empty config file! Make sure not to use same node twice!" << std::endl;
         throw runtime_error("Empty config file!");
@@ -78,13 +81,13 @@ T fromConfig(const YAML::Node &node, const string &key, const char delim = '/') 
 }
 
 template <typename T>
-T fromConfigFile(const string &filename, const string &key, const char delim = '/') {
+inline T fromConfigFile(const string &filename, const string &key, const char delim = '/') {
     YAML::Node node = YAML::LoadFile(filename);
     return fromConfig<T>(node, key, delim);
 }
 
 template <typename T>
-T fromRosConfigFile(const string &key, const char delim = '/') {
+inline T fromRosConfigFile(const string &key, const char delim = '/') {
     string filename;
     if (!ros::NodeHandle().getParam("/config_file", filename)) {
         ROS_ERROR("Could not get config file path from ROS parameter server!");

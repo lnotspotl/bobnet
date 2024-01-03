@@ -124,9 +124,13 @@ include_directories(
     ${YAML_CPP_INCLUDE_DIR}
 )
 
-## Declare a C++ library
+# ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/bobnet_config.cpp
+#   src/utils.cpp
+# )
+# target_link_libraries(${PROJECT_NAME}
+#     ${catkin_LIBRARIES}
+#     ${YAML_CPP_LIBRARIES}
 # )
 
 ## Add cmake target dependencies of the library

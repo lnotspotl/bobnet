@@ -13,6 +13,8 @@
 #include "bobnet_msgs/JointCommand.h"
 #include "bobnet_msgs/JointCommandArray.h"
 
+#include <bobnet_config/utils.h>
+
 namespace bobnet_gazebo {
 
 using scalar_t = float;

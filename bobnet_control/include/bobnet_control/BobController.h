@@ -1,82 +1,47 @@
 #pragma once
 
-#include <bobnet_msgs/JointCommandArray.h>
-
-#include <ros/ros.h>
-
+#include <string>
+#include <vector>
 #include <memory>
 
-#include <bobnet_core/State.h>
+#include <Eigen/Dense>
+
 #include <bobnet_core/Types.h>
+#include <bobnet_control/Controller.h>
+#include <bobnet_control/JointPID.h>
+#include <bobnet_control/StateSubscriber.h>
+
 #include <bobnet_control/InverseKinematics.h>
 #include <bobnet_control/CentralPatternGenerator.h>
 #include <bobnet_reference/ReferenceGenerator.h>
 #include <bobnet_gridmap/GridmapInterface.h>
-#include <bobnet_control/Utils.h>
-#include <bobnet_visualization/anymal_c/AnymalCVisualizer.h>
 
-#include <Eigen/Dense>
-#include <bobnet_msgs/RobotState.h>
+#include <bobnet_visualization/Visualizers.h>
 
 #include <torch/script.h>
 
 namespace bobnet_control {
 
 using namespace bobnet_core;
-
-enum class ControllerType { STAND, RL, NUM_CONTROLLER_TYPES };
-
-std::string controllerType2String(ControllerType type);
-ControllerType string2ControllerType(const std::string &type);
-
-class Controller2 {
-   public:
-    virtual bobnet_msgs::JointCommandArray getCommandMessage(const State &state, scalar_t dt) = 0;
-    virtual ~Controller2() = default;
-};
-
-class StandController : public Controller2 {
-   public:
-    StandController(std::vector<std::string> jointNames, vector_t jointAngles, scalar_t kp, scalar_t kd);
-    bobnet_msgs::JointCommandArray getCommandMessage(const State &state, scalar_t dt) override;
-
-   private:
-    std::vector<std::string> jointNames_;
-    vector_t jointAngles_;
-    scalar_t kp_;
-    scalar_t kd_;
-};
-
 using namespace torch::indexing;
 using torch::jit::script::Module;
-class RlController : public Controller2 {
+
+class BobController : public Controller {
    public:
-    RlController(std::vector<std::string> jointNames, scalar_t kp, scalar_t kd, std::unique_ptr<InverseKinematics> ik,
-                 std::unique_ptr<CentralPatternGenerator> cpg,
-                 std::unique_ptr<bobnet_reference::ReferenceGenerator> refGen,
-                 std::unique_ptr<bobnet_gridmap::GridmapInterface> gridmap, const std::string &modelPath) {
-        jointNames_ = jointNames;
-        kp_ = kp;
-        kd_ = kd;
-        ik_ = std::move(ik);
-        cpg_ = std::move(cpg);
-        refGen_ = std::move(refGen);
-        gridmap_ = std::move(gridmap);
+    BobController(std::shared_ptr<JointPID> &pidControllerPtr, std::shared_ptr<StateSubscriber> &stateSubscriberPtr);
 
-        resetHistory();
-        model_ = loadTorchModel(modelPath);
+    void sendCommand(const scalar_t dt) override;
 
-        // TODO: put this into the loadTorchModel method
-        std::vector<torch::jit::IValue> stack;
-        model_.get_method("set_hidden_size")(stack);
+    void visualize() override;
 
-        auto legHeights = cpg_->legHeights();
-        jointAngles2_ = ik_->solve(legHeights);
-    }
+    void changeController(const std::string &controllerType) override;
 
-    bobnet_msgs::JointCommandArray getCommandMessage(const State &state, scalar_t dt) override;
+    bool isSupported(const std::string &controllerType) override;
 
    private:
+    std::shared_ptr<JointPID> pidControllerPtr_;
+    std::shared_ptr<StateSubscriber> stateSubscriberPtr_;
+
     scalar_t kp_;
     scalar_t kd_;
 
@@ -84,6 +49,8 @@ class RlController : public Controller2 {
     std::unique_ptr<CentralPatternGenerator> cpg_;
     std::unique_ptr<bobnet_reference::ReferenceGenerator> refGen_;
     std::unique_ptr<bobnet_gridmap::GridmapInterface> gridmap_;
+
+    /* Copied section */
 
     scalar_t LIN_VEL_SCALE = 2.0;
     scalar_t ANG_VEL_SCALE = 0.25;
@@ -102,11 +69,9 @@ class RlController : public Controller2 {
     int VELOCITY_SIZE = 12;
     int COMMAND_SIZE = 16;
 
-    bobnet_visualization::AnymalCVisualizer visualizer_;
+    bobnet_visualization::HeightsReconstructedVisualizer visualizer_;
 
     Module model_;
-
-    std::vector<std::string> jointNames_;
 
     constexpr size_t getNNInputSize() { return 3 + 3 + 3 + 3 + 12 + 12 + 3 * 12 + 2 * 12 + 2 * 16 + 8 + 4 * 52; }
 
@@ -143,11 +108,15 @@ class RlController : public Controller2 {
     std::vector<at::Tensor> historyVelocities_;
     int historyVelocitiesIndex_ = 0;
     std::vector<at::Tensor> historyActions_;
-    int historyActionsIndex_ = 1;
+    int historyActionsIndex_ = 0;
+
+    // at::Tensor nnInput_;
+    at::Tensor hidden_;
 
     vector_t jointAngles2_;
 
     Eigen::MatrixXd sampled_;
+
 };
 
 }  // namespace bobnet_control

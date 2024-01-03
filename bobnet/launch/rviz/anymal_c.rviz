@@ -729,17 +729,17 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /visualization_marker
+      Marker Topic: /markers
       Name: MarkerArray
       Namespaces:
-        ground_truth_sampled_points_0: true
-        ground_truth_sampled_points_1: false
-        ground_truth_sampled_points_2: false
-        ground_truth_sampled_points_3: false
-        nn_reconstructed_sampled_points_0: true
-        nn_reconstructed_sampled_points_1: false
-        nn_reconstructed_sampled_points_2: false
-        nn_reconstructed_sampled_points_3: false
+        ground_truth0: true
+        ground_truth1: false
+        ground_truth2: false
+        ground_truth3: false
+        nn_reconstructed0: true
+        nn_reconstructed1: false
+        nn_reconstructed2: false
+        nn_reconstructed3: false
       Queue Size: 100
       Value: true
   Enabled: true
@@ -770,7 +770,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.407697677612305
+      Distance: 4.409294128417969
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -778,9 +778,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.8531296849250793
-        Y: -0.6283122897148132
-        Z: 0.30106258392333984
+        X: 1.4401153326034546
+        Y: -0.5002204775810242
+        Z: -0.1998935043811798
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -806,5 +806,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1870
-  X: 50
+  X: 52
   Y: 27

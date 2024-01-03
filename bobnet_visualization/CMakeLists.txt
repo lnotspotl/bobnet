@@ -15,12 +15,15 @@ find_package(catkin REQUIRED COMPONENTS
     robot_state_publisher
     geometry_msgs
     bobnet_core
+    bobnet_config
 )
 find_package(Torch REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
   ${CATKIN_PACKAGE_DEPENDENCIES}
 )
+
+find_package(yaml-cpp REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -113,7 +116,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES bobnet_visualization
+    LIBRARIES bobnet_visualization bobnet_config
     CATKIN_DEPENDS roscpp
    #  DEPENDS system_lib
 )
@@ -133,10 +136,11 @@ include_directories(
 add_library(bobnet_visualization
     src/RvizVisualizer.cpp
     src/anymal_c/AnymalCVisualizer.cpp
+    src/Visualizers.cpp
 )
 target_link_libraries(bobnet_visualization ${catkin_LIBRARIES}
 ${TORCH_LIBRARIES}
-
+yaml-cpp
 )
 
 ## Add cmake target dependencies of the library

@@ -35,7 +35,7 @@ class RobotInterface {
     ros::Subscriber changeControllerSubscriber_;
     ros::Publisher commandPublisher_;
 
-    std::array<std::unique_ptr<Controller>, static_cast<size_t>(ControllerType::NUM_CONTROLLER_TYPES)> controllers_;
+    std::array<std::unique_ptr<Controller2>, static_cast<size_t>(ControllerType::NUM_CONTROLLER_TYPES)> controllers_;
 
     size_t controllerIndex_;
 

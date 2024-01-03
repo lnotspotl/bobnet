@@ -21,4 +21,5 @@ State State::fromMessage(const bobnet_msgs::RobotState::ConstPtr stateMsg) {
     return state;
 }
 
+
 }  // namespace bobnet_core

@@ -21,12 +21,12 @@ void AnymalCVisualizer::visualize(const bobnet_core::State &state, const Eigen::
     publishBaseTransform(timeStamp, state);
     publishJointAngles(timeStamp, state);
 
-    publishMarkers(timeStamp, sampled, 0, "ground_truth",
-                   [&](size_t id) { return -(sampled(2, id) / 1.0 + 0.5 - state.basePositionWorld[2]); });
-    publishMarkers(timeStamp, sampled, 1, "nn_reconstructed", [&](size_t id) {
-        float out = -(nnPointsReconstructed[id].item<float>() / 1.0 + 0.5 - state.basePositionWorld[2]);
-        return static_cast<scalar_t>(out);
-    });
+    // publishMarkers(timeStamp, sampled, 0, "ground_truth",
+    //                [&](size_t id) { return -(sampled(2, id) / 1.0 + 0.5 - state.basePositionWorld[2]); });
+    // publishMarkers(timeStamp, sampled, 1, "nn_reconstructed", [&](size_t id) {
+    //     float out = -(nnPointsReconstructed[id].item<float>() / 1.0 + 0.5 - state.basePositionWorld[2]);
+    //     return static_cast<scalar_t>(out);
+    // });
 }
 
 /***********************************************************************************************************************/

@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Torch REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
@@ -112,7 +113,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES bobnet
- CATKIN_DEPENDS bobnet_control roscpp
+ CATKIN_DEPENDS bobnet_control roscpp bobnet_config
 #  DEPENDS system_lib
 )
 
@@ -142,6 +143,9 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(anymal_c_main src/anymal_c_main.cpp)
 target_link_libraries(anymal_c_main ${catkin_LIBRARIES} ${TORCH_LIBRARIES})
+
+add_executable(anymal_c_main2 src/anymal_c_main2.cpp)
+target_link_libraries(anymal_c_main2 ${catkin_LIBRARIES} ${TORCH_LIBRARIES} yaml-cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

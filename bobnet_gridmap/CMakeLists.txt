@@ -13,9 +13,10 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     grid_map_ros
     grid_map_pcl
+    bobnet_config
 )
 
-
+find_package(yaml-cpp REQUIRED)
 find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
@@ -109,8 +110,8 @@ find_package(OpenCV REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES bobnet_gridmap
-#  CATKIN_DEPENDS other_catkin_pkg
+  LIBRARIES bobnet_gridmap 
+ CATKIN_DEPENDS bobnet_config
  DEPENDS OpenCV
 )
 
@@ -144,7 +145,7 @@ add_executable(load_map
  src/load_map.cpp
  src/StaticLoader.cpp
  )
-target_link_libraries(load_map ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(load_map ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} yaml-cpp)
 
 
 

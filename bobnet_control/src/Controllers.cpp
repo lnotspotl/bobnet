@@ -278,22 +278,22 @@ void RlController::fillHeights(at::Tensor &input, const State &state) {
     gridmap_->atPositions(sampled_);
 
     // clamp third row between -1 and 1
-    // sampled_.row(2) = (state.basePositionWorld[2] - sampled_.row(2).array()).array() - 0.5;
-    // sampled_.row(2) = sampled_.row(2).cwiseMax(-1.0).cwiseMin(1.0) * HEIGHT_MEASUREMENTS_SCALE;
+    sampled_.row(2) = (state.basePositionWorld[2] - sampled_.row(2).array()).array() - 0.5;
+    sampled_.row(2) = sampled_.row(2).cwiseMax(-1.0).cwiseMin(1.0) * HEIGHT_MEASUREMENTS_SCALE;
 
     // auto options = torch::TensorOptions().dtype(torch::kDouble);
     // input.index({Slice(startIdx, None)}) = torch::from_blob(sampled_.row(2).data(), {4 * 52}, options);
 
     for(int i = 0; i < 4*52; ++i) {
-        float out = state.basePositionWorld[2] - 0.5 - sampled_(2, i);
-        if (out > 1.0) {
-            out = 1.0;
-        } else if (out < -1.0) {
-            out = -1.0;
-        }
+        input[startIdx + i] = sampled_(2, i);
+        // float out = state.basePositionWorld[2] - 0.5 - sampled_(2, i);
+        // if (out > 1.0) {
+        //     out = 1.0;
+        // } else if (out < -1.0) {
+        //     out = -1.0;
+        // }
 
-        input[startIdx + i] = out * HEIGHT_MEASUREMENTS_SCALE;
-        sampled_(2, i) = out;
+        // sampled_(2, i) = out;
     }
 }
 
