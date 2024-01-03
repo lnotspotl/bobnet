@@ -115,7 +115,7 @@ class BobController : public Controller {
 
     vector_t jointAngles2_;
 
-    Eigen::MatrixXd sampled_;
+    matrix_t sampled_;
 
 };
 

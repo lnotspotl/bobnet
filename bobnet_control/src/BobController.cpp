@@ -173,14 +173,14 @@ void BobController::fillHeights(at::Tensor &input, const State &state) {
         36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + COMMAND_HISTORY_SIZE * 16 + 8;
 
     // Find yaw angle
-    Eigen::Quaterniond q(state.baseOrientationWorld[3], state.baseOrientationWorld[0], state.baseOrientationWorld[1],
-                         state.baseOrientationWorld[2]);
+    quaternion_t q(state.baseOrientationWorld[3], state.baseOrientationWorld[0], state.baseOrientationWorld[1],
+                   state.baseOrientationWorld[2]);
 
-    double yaw = pinocchio::rpy::matrixToRpy(q.toRotationMatrix())[2];
+    scalar_t yaw = pinocchio::rpy::matrixToRpy(q.toRotationMatrix())[2];
 
     // Rotate sampling points
-    Eigen::Matrix3d Ryaw = Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()).toRotationMatrix();
-    Eigen::MatrixXd rotatedSamplingPoints = Ryaw * gridmap_->samplingPositions_;
+    matrix3_t Ryaw = angleaxis_t(yaw, vector3_t::UnitZ()).toRotationMatrix();
+    matrix_t rotatedSamplingPoints = Ryaw * gridmap_->samplingPositions_;
 
     // Replicate sampling points
     sampled_ = rotatedSamplingPoints.replicate<1, 4>();

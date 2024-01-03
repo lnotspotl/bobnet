@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
     grid_map_ros
     grid_map_pcl
     bobnet_config
+    bobnet_core
 )
 
 find_package(yaml-cpp REQUIRED)
@@ -111,7 +112,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES bobnet_gridmap 
- CATKIN_DEPENDS bobnet_config
+ CATKIN_DEPENDS bobnet_config bobnet_core
  DEPENDS OpenCV
 )
 

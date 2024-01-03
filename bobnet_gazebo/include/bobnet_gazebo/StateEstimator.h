@@ -17,15 +17,18 @@
 #include "pinocchio/algorithm/joint-configuration.hpp"
 #include "pinocchio/parsers/urdf.hpp"
 
+#include <bobnet_core/Types.h>
+
 // Eigen
 #include <Eigen/Dense>
 
 namespace gazebo {
 
-using scalar_t = float;
+using namespace bobnet_core;
+
 using Vector3 = Eigen::Matrix<scalar_t, 3, 1>;
 using Matrix3 = Eigen::Matrix<scalar_t, 3, 3>;
-using VectorX = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
+using VectorX = vector_t;
 using AngleAxis = Eigen::AngleAxis<scalar_t>;
 using Quaternion = Eigen::Quaternion<scalar_t>;
 

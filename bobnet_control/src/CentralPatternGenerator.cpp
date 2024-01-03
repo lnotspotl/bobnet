@@ -22,7 +22,7 @@ vector_t CentralPatternGenerator::computePhases() {
     // Essentially compute ((time + offset) / period % 1) * 2 * pi for all legs
     phases.array() += time_;
     phases.array() /= period_;
-    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, 1.0); });
+    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, static_cast<scalar_t>(1.0)); });
     phases.array() *= 2 * M_PI;
     return phases;
 }
@@ -30,7 +30,7 @@ vector_t CentralPatternGenerator::computePhases() {
 vector_t CentralPatternGenerator::computePhases(vector_t &phase_offsets) {
     auto phases = computePhases();
     phases = phases.array() + phase_offsets.array();
-    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, 2 * M_PI); });
+    phases = phases.unaryExpr([](scalar_t x) { return std::fmod(x, static_cast<scalar_t>(2 * M_PI)); });
     return phases;
 }
 

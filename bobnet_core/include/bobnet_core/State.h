@@ -3,22 +3,26 @@
 #include <Eigen/Dense>
 #include <bobnet_msgs/RobotState.h>
 
+#include <bobnet_core/Types.h>
+
 namespace bobnet_core {
 
 struct State {
-    using Vector12d = Eigen::Matrix<double, 12, 1>;
+    using Vector3 = Eigen::Matrix<scalar_t, 3, 1>;
+    using Vector4 = Eigen::Matrix<scalar_t, 4, 1>;
+    using Vector12 = Eigen::Matrix<scalar_t, 12, 1>;
 
-    Eigen::Vector3d basePositionWorld;
-    Eigen::Vector4d baseOrientationWorld;  // quaternion, xyzw
-    Eigen::Vector3d baseLinearVelocityBase;
-    Eigen::Vector3d baseAngularVelocityBase;
-    Eigen::Vector3d normalizedGravityBase;
-    Vector12d jointPositions;
-    Vector12d jointVelocities;
-    Eigen::Vector3d lfFootPositionWorld;
-    Eigen::Vector3d lhFootPositionWorld;
-    Eigen::Vector3d rfFootPositionWorld;
-    Eigen::Vector3d rhFootPositionWorld;
+    Vector3 basePositionWorld;
+    Vector4 baseOrientationWorld;  // quaternion, xyzw
+    Vector3 baseLinearVelocityBase;
+    Vector3 baseAngularVelocityBase;
+    Vector3 normalizedGravityBase;
+    Vector12 jointPositions;
+    Vector12 jointVelocities;
+    Vector3 lfFootPositionWorld;
+    Vector3 lhFootPositionWorld;
+    Vector3 rfFootPositionWorld;
+    Vector3 rhFootPositionWorld;
 
     static State fromMessage(const bobnet_msgs::RobotState::ConstPtr stateMsg);
 };

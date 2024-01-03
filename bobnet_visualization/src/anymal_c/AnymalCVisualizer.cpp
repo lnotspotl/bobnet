@@ -15,7 +15,7 @@ AnymalCVisualizer::AnymalCVisualizer() : RvizVisualizer() {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
-void AnymalCVisualizer::visualize(const bobnet_core::State &state, const Eigen::MatrixXd &sampled,
+void AnymalCVisualizer::visualize(const bobnet_core::State &state, const matrix_t &sampled,
                                   const at::Tensor &nnPointsReconstructed) {
     ros::Time timeStamp = ros::Time::now();
     publishBaseTransform(timeStamp, state);
@@ -67,7 +67,7 @@ void AnymalCVisualizer::publishJointAngles(ros::Time timeStamp, const bobnet_cor
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
-void AnymalCVisualizer::publishMarkers(ros::Time timeStamp, const Eigen::MatrixXd &sampled, size_t color_idx,
+void AnymalCVisualizer::publishMarkers(ros::Time timeStamp, const matrix_t &sampled, size_t color_idx,
                                        const std::string &prefix, std::function<scalar_t(size_t)> f) {
     std::vector<std::array<double, 4>> colors = {
         {1.0, 0.0, 0.0, 1.0}, {0.0, 1.0, 0.0, 1.0}, {0.0, 0.0, 1.0, 1.0}, {1.0, 1.0, 0.0, 1.0}};

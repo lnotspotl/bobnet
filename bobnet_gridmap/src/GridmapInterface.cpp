@@ -17,7 +17,7 @@ GridmapInterface::GridmapInterface(ros::NodeHandle &nh, const std::string &topic
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-void GridmapInterface::atPositions(Eigen::MatrixXd &sampled) {
+void GridmapInterface::atPositions(matrix_t &sampled) {
     for (int i = 0; i < sampled.cols(); ++i) {
         scalar_t x = sampled(0, i);
         scalar_t y = sampled(1, i);
@@ -51,7 +51,7 @@ void GridmapInterface::generateSamplingPositions() {
     std::vector<scalar_t> Ns = {6, 8, 10, 12, 16};
     std::vector<scalar_t> rs = {0.1, 0.3, 0.5, 0.7, 0.9};
 
-    samplingPositions_ = Eigen::MatrixXd::Zero(3, std::accumulate(Ns.begin(), Ns.end(), 0));
+    samplingPositions_ = matrix_t::Zero(3, std::accumulate(Ns.begin(), Ns.end(), 0));
 
     size_t idx = 0;
     for (int i = 0; i < Ns.size(); ++i) {

@@ -15,10 +15,10 @@
 
 #include <bobnet_config/utils.h>
 
+#include <bobnet_core/Types.h>
 namespace bobnet_gazebo {
 
-using scalar_t = float;
-
+using namespace bobnet_core;
 class JointController : public controller_interface::Controller<hardware_interface::EffortJointInterface> {
    public:
     // initialize joint controller

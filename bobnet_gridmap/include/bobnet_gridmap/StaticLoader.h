@@ -4,9 +4,11 @@
 #include <string>
 #include <grid_map_ros/grid_map_ros.hpp>
 
+#include <bobnet_core/Types.h>
+
 namespace bobnet_gridmap {
 
-using scalar_t = double;
+using namespace bobnet_core;
 
 class StaticLoader {
    public:

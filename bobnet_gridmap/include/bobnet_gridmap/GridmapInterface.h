@@ -9,10 +9,11 @@
 
 #include <grid_map_ros/grid_map_ros.hpp>
 
+#include <bobnet_core/Types.h>
+
 namespace bobnet_gridmap {
 
-using scalar_t = double;
-using vs = std::vector<scalar_t>;
+using namespace bobnet_core;
 
 class GridmapInterface {
    public:
@@ -28,8 +29,8 @@ class GridmapInterface {
         return map_.atPosition("elevation", position);
     }
 
-    void atPositions(Eigen::MatrixXd &sampled);
-    Eigen::MatrixXd samplingPositions_;
+    void atPositions(matrix_t &sampled);
+    matrix_t samplingPositions_;
 
    private:
     void callback(const grid_map_msgs::GridMap &msg);

@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   bobnet_msgs
   bobnet_config
+  bobnet_core
 )
 
 find_package(gazebo REQUIRED)
@@ -115,7 +116,7 @@ find_package(yaml-cpp REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES anymal_gazebo
- CATKIN_DEPENDS bobnet_msgs bobnet_config
+ CATKIN_DEPENDS bobnet_msgs bobnet_config bobnet_core
  DEPENDS pinocchio
 )
 

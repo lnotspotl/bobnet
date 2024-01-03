@@ -63,6 +63,7 @@
   <exec_depend>pluginlib</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <depend>bobnet_config</depend>
+  <depend>bobnet_core</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
