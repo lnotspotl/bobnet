@@ -113,7 +113,7 @@ find_package(yaml-cpp REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES bobnet_control bobnet_control2
+ LIBRARIES bobnet_control 
  CATKIN_DEPENDS roscpp bobnet_msgs bobnet_reference bobnet_core bobnet_visualization bobnet_config
 #  DEPENDS system_lib
 )
@@ -132,28 +132,26 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_library(bobnet_control
-    src/Controllers.cpp
-    src/RobotInterface.cpp
-    src/Utils.cpp
-    src/InverseKinematics.cpp
-    src/CentralPatternGenerator.cpp
-    src/anymal_c/AnymalCInverseKinematics.cpp
-)
-target_link_libraries(bobnet_control ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES} )
+# add_library(bobnet_control
+#     src/Controllers.cpp
+#     src/RobotInterface.cpp
+#     src/Utils.cpp
+#     src/InverseKinematics.cpp
+#     src/CentralPatternGenerator.cpp
+#     src/anymal_c/AnymalCInverseKinematics.cpp
+# )
+# target_link_libraries(bobnet_control ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES} )
 
-add_library(bobnet_control2
+add_library(bobnet_control
   src/CentralController.cpp
   src/StaticController.cpp
   src/JointPID.cpp
   src/StateSubscriber.cpp
   src/BobController.cpp
-  src/Utils.cpp
   src/InverseKinematics.cpp
   src/CentralPatternGenerator.cpp
-  src/anymal_c/AnymalCInverseKinematics.cpp
 )
-target_link_libraries(bobnet_control2 ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES} yaml-cpp)
+target_link_libraries(bobnet_control ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${pinocchio_LIBRARIES} yaml-cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -202,13 +200,13 @@ target_link_libraries(bobnet_control2 ${catkin_LIBRARIES} ${TORCH_LIBRARIES} ${p
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS bobnet_control
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+# install(TARGETS bobnet_control
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+# )
 
-install(TARGETS bobnet_control2
+install(TARGETS bobnet_control
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

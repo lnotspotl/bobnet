@@ -3,6 +3,8 @@
 #include <ros/ros.h>
 #include <vector>
 
+
+#include <memory>
 #include <Eigen/Dense>
 
 #include <grid_map_ros/grid_map_ros.hpp>
@@ -38,5 +40,9 @@ class GridmapInterface {
 
     void generateSamplingPositions();
 };
+
+std::unique_ptr<GridmapInterface> getGridmapInterfaceUnique();
+
+std::shared_ptr<GridmapInterface> getGridmapInterfaceShared();
 
 }  // namespace bobnet_gridmap

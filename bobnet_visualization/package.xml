@@ -56,8 +56,7 @@
   <depend>roscpp</depend>
   <depend>geometry_msgs</depend>
   <depend>bobnet_core</depend>
-
-
+  <depend>bobnet_config</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

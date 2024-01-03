@@ -14,7 +14,10 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     geometry_msgs
     bobnet_core
+    bobnet_config
 )
+
+find_package(yaml-cpp REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -108,7 +111,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES bobnet_reference 
- CATKIN_DEPENDS bobnet_core
+ CATKIN_DEPENDS bobnet_core bobnet_config
 #  DEPENDS system_lib
 )
 
@@ -131,7 +134,7 @@ include_directories(
 add_library(bobnet_reference
     src/ReferenceGenerator.cpp
 )
-target_link_libraries(bobnet_reference ${catkin_LIBRARIES})
+target_link_libraries(bobnet_reference ${catkin_LIBRARIES} yaml-cpp)
 
 
 ## Add cmake target dependencies of the library

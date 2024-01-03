@@ -8,6 +8,8 @@
 #include <sensor_msgs/Joy.h>
 #include <geometry_msgs/Twist.h>
 
+#include <memory>
+
 namespace bobnet_reference {
 
 using namespace bobnet_core;
@@ -74,5 +76,9 @@ class TwistReferenceGenerator : public RosReferenceGenerator<geometry_msgs::Twis
    private:
     void callback(const geometry_msgs::Twist &msg) override;
 };
+
+std::unique_ptr<ReferenceGenerator> getReferenceGeneratorUnique();
+
+std::shared_ptr<ReferenceGenerator> getReferenceGeneratorShared();
 
 }  // namespace bobnet_reference

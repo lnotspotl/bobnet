@@ -141,11 +141,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(anymal_c_main src/anymal_c_main.cpp)
-target_link_libraries(anymal_c_main ${catkin_LIBRARIES} ${TORCH_LIBRARIES})
 
-add_executable(anymal_c_main2 src/anymal_c_main2.cpp)
-target_link_libraries(anymal_c_main2 ${catkin_LIBRARIES} ${TORCH_LIBRARIES} yaml-cpp)
+add_executable(anymal_c_main src/anymal_c_main.cpp)
+target_link_libraries(anymal_c_main ${catkin_LIBRARIES} ${TORCH_LIBRARIES} yaml-cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

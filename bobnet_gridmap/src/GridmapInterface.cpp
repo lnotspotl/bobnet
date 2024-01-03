@@ -1,5 +1,7 @@
 #include <bobnet_gridmap/GridmapInterface.h>
 
+#include <bobnet_config/utils.h>
+
 #include <numeric>
 
 namespace bobnet_gridmap {
@@ -64,6 +66,23 @@ void GridmapInterface::generateSamplingPositions() {
             ++idx;
         }
     }
+}
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+std::unique_ptr<GridmapInterface> getGridmapInterfaceUnique() {
+    ros::NodeHandle nh;
+    auto topic = bobnet_config::fromRosConfigFile<std::string>("gridmap_topic");
+
+    return std::unique_ptr<GridmapInterface>(new GridmapInterface(nh, topic));
+}
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+std::shared_ptr<GridmapInterface> getGridmapInterfaceShared() {
+    return std::shared_ptr<GridmapInterface>(getGridmapInterfaceUnique().release());
 }
 
 }  // namespace bobnet_gridmap

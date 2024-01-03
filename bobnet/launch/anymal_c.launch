@@ -13,10 +13,6 @@
         <arg name="robot_name" value="anymal_c"/>
     </include>
 
-    <!-- RL controller arguments -->
-    <arg name="rl_policy_path"     default="/home/kuba/Downloads/pol.pt"/>
-    <param name="rl_policy_path"   value="$(arg rl_policy_path)"/>
-
     <!-- Reference arguments -->
     <arg name="reference_source"   default="joystick"/>
     <param name="reference_source" value="$(arg reference_source)"/>
@@ -49,18 +45,12 @@
         </include>
 	</group>
 
-    <!-- Twist reference -->
-    <group if="$(eval reference_source == 'twist')">
-    </group>
-
     <!-- Gridmap loader -->
-    <param name="/bobnet/gridmap_topic" value="/anymal_c/grid_map"/>
     <param name="/bobnet/gridmap_path" value="$(find bobnet_gazebo)/launch/worlds/$(arg world)/$(arg world).ply"/>
     <node name="gridmap_loader" pkg="bobnet_gridmap" type="load_map"/>
 
     <!-- Robot interface -->
-    <param name="/bobnet/interface_rate" value="20000"/>
-    <node name="robot_interface" pkg="bobnet" type="anymal_c_main2" output="screen"/>
+    <node name="robot_interface" pkg="bobnet" type="anymal_c_main" output="screen"/>
 
     <!-- Start Rviz visualizer -->
     <arg name="rvizconfig" default="$(find bobnet)/launch/rviz/anymal_c.rviz" />

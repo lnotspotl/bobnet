@@ -116,8 +116,8 @@ find_package(yaml-cpp REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES bobnet_visualization bobnet_config
-    CATKIN_DEPENDS roscpp
+    LIBRARIES bobnet_visualization 
+    CATKIN_DEPENDS roscpp bobnet_config
    #  DEPENDS system_lib
 )
 

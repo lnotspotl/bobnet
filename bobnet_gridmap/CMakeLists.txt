@@ -131,7 +131,7 @@ include_directories(
 add_library(bobnet_gridmap
   src/GridmapInterface.cpp
 )
-target_link_libraries(bobnet_gridmap ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(bobnet_gridmap ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} yaml-cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

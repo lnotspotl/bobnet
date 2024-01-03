@@ -2,7 +2,6 @@
 #include "bobnet_control/BobController.h"
 
 #include <bobnet_config/utils.h>
-#include <bobnet_control/Utils.h>
 
 #include <ros/ros.h>
 
@@ -19,27 +18,28 @@ BobController::BobController(std::shared_ptr<JointPID> &pidControllerPtr,
     kp_ = bobnet_config::fromRosConfigFile<scalar_t>("bob_controller/kp");
     kd_ = bobnet_config::fromRosConfigFile<scalar_t>("bob_controller/kd");
 
-    auto robotName = bobnet_config::fromRosConfigFile<std::string>("robot_name");
-
     ROS_INFO("Getting IK");
-    ik_ = getInverseKinematics(robotName);
+    ik_ = bobnet_control::getInverseKinematicsUnique();
 
     ROS_INFO("Getting CPG");
-    cpg_ = getCentralPatternGenerator();
+    cpg_ = bobnet_control::getCentralPatternGeneratorUnique();
 
     ROS_INFO("Getting refGen");
-    refGen_ = getReferenceGenerator();
+    refGen_ = bobnet_reference::getReferenceGeneratorUnique();
 
     ROS_INFO("Getting gridmap");
-    gridmap_ = getGridmapInterface();
+    gridmap_ = bobnet_gridmap::getGridmapInterfaceUnique();
 
-    std::string modelPath;
-    if (!ros::NodeHandle().getParam("/rl_policy_path", modelPath)) {
-        throw std::runtime_error("Failed to get param /rl_policy_path");
+    auto modelPath = bobnet_config::fromRosConfigFile<std::string>("bob_controller/model_path");
+    ROS_INFO_STREAM("[BobController] Loading model from: " << modelPath);
+
+    try {
+        model_ = torch::jit::load(modelPath);
+    } catch (const c10::Error &e) {
+        std::cerr << "Could not load model from: " << modelPath << std::endl;
+        throw std::runtime_error("Could not load model");
     }
-    model_ = loadTorchModel(modelPath);
 
-    // TODO: put this into the loadTorchModel method
     std::vector<torch::jit::IValue> stack;
     model_.get_method("set_hidden_size")(stack);
     resetHistory();

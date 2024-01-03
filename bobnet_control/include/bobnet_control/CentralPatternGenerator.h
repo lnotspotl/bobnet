@@ -2,6 +2,8 @@
 
 #include <bobnet_core/Types.h>
 
+#include <memory>
+
 namespace bobnet_control {
 
 using namespace bobnet_core;
@@ -27,5 +29,9 @@ class CentralPatternGenerator {
     scalar_t swingHeight_;
     vector_t timeOffsets_;
 };
+
+std::unique_ptr<CentralPatternGenerator> getCentralPatternGeneratorUnique();
+
+std::shared_ptr<CentralPatternGenerator> getCentralPatternGeneratorShared();
 
 }  // namespace bobnet_control

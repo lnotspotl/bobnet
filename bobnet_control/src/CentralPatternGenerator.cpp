@@ -1,6 +1,8 @@
 #include <bobnet_control/CentralPatternGenerator.h>
 #include <cmath>
 
+#include <bobnet_config/utils.h>
+
 #include <iostream>
 
 namespace bobnet_control {
@@ -66,6 +68,18 @@ vector_t CentralPatternGenerator::computeLegHeights(vector_t &phases) {
     }
 
     return leg_heights;
+}
+
+std::unique_ptr<CentralPatternGenerator> getCentralPatternGeneratorUnique() {
+    auto period = bobnet_config::fromRosConfigFile<scalar_t>("bob_controller/cpg/period");
+    auto time_offsets = bobnet_config::fromRosConfigFile<vector_t>("bob_controller/cpg/time_offsets");
+    auto swingHeight = bobnet_config::fromRosConfigFile<scalar_t>("bob_controller/cpg/swing_height");
+
+    return std::unique_ptr<CentralPatternGenerator>(new CentralPatternGenerator(period, swingHeight, time_offsets));
+}
+
+std::shared_ptr<CentralPatternGenerator> getCentralPatternGeneratorShared() {
+    return std::shared_ptr<CentralPatternGenerator>(getCentralPatternGeneratorUnique().release());
 }
 
 }  // namespace bobnet_control
