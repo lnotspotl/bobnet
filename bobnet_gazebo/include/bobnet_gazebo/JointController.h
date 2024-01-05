@@ -40,6 +40,9 @@ class JointController : public controller_interface::Controller<hardware_interfa
     // joint_name -> joint_limits map
     std::unordered_map<std::string, std::pair<scalar_t, scalar_t>> joint_limits;
 
+    // join_name -> effort limit
+    std::unordered_map<std::string, scalar_t> effort_limits;
+
     // command message realtime buffer
     typedef bobnet_msgs::JointCommandArray BufferType;
     realtime_tools::RealtimeBuffer<BufferType> command_buffer;

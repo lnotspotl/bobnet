@@ -200,13 +200,13 @@ Visualization Manager:
       Name: MarkerArray
       Namespaces:
         ground_truth0: true
-        ground_truth1: true
-        ground_truth2: true
-        ground_truth3: true
+        ground_truth1: false
+        ground_truth2: false
+        ground_truth3: false
         nn_reconstructed0: true
-        nn_reconstructed1: true
-        nn_reconstructed2: true
-        nn_reconstructed3: true
+        nn_reconstructed1: false
+        nn_reconstructed2: false
+        nn_reconstructed3: false
       Queue Size: 100
       Value: true
   Enabled: true
@@ -237,7 +237,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.583364486694336
+      Distance: 5.0991034507751465
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -245,9 +245,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.9634283185005188
-        Y: -0.3917245864868164
-        Z: -0.304761677980423
+        X: 1.9563257694244385
+        Y: -0.5742625594139099
+        Z: -0.19093914330005646
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false

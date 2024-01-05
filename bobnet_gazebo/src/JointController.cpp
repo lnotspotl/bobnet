@@ -38,6 +38,8 @@ bool JointController::init(hardware_interface::EffortJointInterface *hw, ros::No
         joint_limit.second = joint_urdf->limits->upper;
         joint_limits[joint_name] = joint_limit;
         joint_idxs_[joint_name] = i;
+
+        effort_limits[joint_name] = joint_urdf->limits->effort;
     }
 
     ROS_INFO("[Bobnet gazebo joint controller] Subscribing to command topic.");
@@ -76,11 +78,11 @@ void JointController::update(const ros::Time &time, const ros::Duration &period)
 
         // get command values
         std::string &joint_name = command.joint_name;
-        scalar_t position_desired = command.position_desired;
-        scalar_t velocity_desired = command.velocity_desired;
-        scalar_t kp = command.kp;
-        scalar_t kd = command.kd;
-        scalar_t torque_ff = command.torque_ff;
+        const scalar_t position_desired = command.position_desired;
+        const scalar_t velocity_desired = command.velocity_desired;
+        const scalar_t kp = command.kp;
+        const scalar_t kd = command.kd;
+        const scalar_t torque_ff = command.torque_ff;
 
         // get current values
         hardware_interface::JointHandle &joint = joint_map[joint_name];
@@ -99,15 +101,12 @@ void JointController::update(const ros::Time &time, const ros::Duration &period)
         // compute torque command
         scalar_t torque = torque_ff + kp * position_error + kd * velocity_error;
 
-        // saturate torque command
-        constexpr scalar_t minTorque = -100.0;
-        constexpr scalar_t maxTorque = 100.0;
-        torque = std::max(minTorque, std::min(maxTorque, torque));
+        // clip torque
+        const scalar_t effortLimit = effort_limits[joint_name];
+        torque = std::max(-effortLimit, std::min(effortLimit, torque));
 
         // set joint torque
         joint.setCommand(torque);
-
-        // Todo: enforce joint limits
     }
 }
 
