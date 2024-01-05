@@ -1,6 +1,5 @@
-<!-- Note: Effort and velocity limits copied from Anymal C:  https://github.com/ANYbotics/anymal_c_simple_description/blob/master/urdf/anymal.urdf -->
-
 <?xml version="1.0" ?>
+<!-- Note: Effort and velocity limits copied from Anymal C:  https://github.com/ANYbotics/anymal_c_simple_description/blob/master/urdf/anymal.urdf -->
 <robot name="spot" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <link name="base">
     <visual>

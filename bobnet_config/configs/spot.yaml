@@ -23,7 +23,7 @@ static_controller:
   stand_controller:
     joint_angles: [0.0, 0.90, -1.70, 0.0, 1.05, -1.70, 0.0, 0.90, -1.70, 0.0, 1.05, -1.70] # LF, LH, RF, RH
   sit_controller:
-    joint_angles: [0.0, 1.6, -3.0, 0.0, 1.6, -3.0, 0.0, 1.6, -3.0, 0.0, 1.6, -3.0] # LF, LH, RF, RH
+    joint_angles: [0.0, 1.6, -2.7, 0.0, 1.6, -2.7, 0.0, 1.6, -2.7, 0.0, 1.6, -2.7] # LF, LH, RF, RH
   kp: 400
   kd: 5
   interpolation_time: 1.0 # s
