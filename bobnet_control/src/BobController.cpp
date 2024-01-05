@@ -44,8 +44,10 @@ BobController::BobController(std::shared_ptr<JointPID> &pidControllerPtr,
     model_.get_method("set_hidden_size")(stack);
     resetHistory();
 
-    auto legHeights = cpg_->legHeights();
-    jointAngles2_ = ik_->solve(legHeights);
+    // auto legHeights = cpg_->legHeights();
+    // jointAngles2_ = ik_->solve(legHeights);
+
+    standJointAngles_ = bobnet_config::fromRosConfigFile<vector_t>("static_controller/stand_controller/joint_angles");
 }
 
 void BobController::visualize() { visualizer_.visualize(stateSubscriberPtr_->getState(), sampled_, hidden_); }
@@ -131,7 +133,7 @@ void BobController::fillBaseAngularVelocity(at::Tensor &input, const State &stat
 void BobController::fillJointResiduals(at::Tensor &input, const State &state) {
     // fill joint residuals
     for (size_t i = 0; i < 12; ++i) {
-        input[12 + i] = (state.jointPositions[i] - jointAngles2_[i]) * JOINT_POS_SCALE;
+        input[12 + i] = (state.jointPositions[i] - standJointAngles_[i]) * JOINT_POS_SCALE;
     }
 }
 
@@ -310,8 +312,8 @@ void BobController::sendCommand(const scalar_t dt) {
 
     pidControllerPtr_->sendCommand(jointAngles2_, kp_, kd_);
 
-    legHeights = cpg_->legHeights();
-    jointAngles2_ = ik_->solve(legHeights) + jointResidualsVec;
+    // legHeights = cpg_->legHeights();
+    // jointAngles2_ = ik_->solve(legHeights) + jointResidualsVec;
 
     // update history buffer
     updateHistory(nnInput, action);

@@ -33,6 +33,17 @@ class AnymalCInverseKinematics : public InverseKinematics {
     scalar_t a4_;
 };
 
+class SpotInverseKinematics : public InverseKinematics {
+   public:
+    SpotInverseKinematics();
+    vector_t solve_ik(matrix_t &footPositions) override;
+
+   private:
+    scalar_t d2_;
+    scalar_t a3_;
+    scalar_t a4_;
+};
+
 std::unique_ptr<InverseKinematics> getInverseKinematicsUnique();
 
 std::shared_ptr<InverseKinematics> getInverseKinematicsShared();

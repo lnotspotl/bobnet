@@ -460,161 +460,161 @@ Visualization Manager:
         LF_FOOT:
           Value: false
         LF_HAA:
-          Value: false
+          Value: true
         LF_HFE:
-          Value: false
+          Value: true
         LF_HIP:
-          Value: false
+          Value: true
         LF_KFE:
-          Value: false
+          Value: true
         LF_SHANK:
-          Value: false
+          Value: true
         LF_THIGH:
-          Value: false
+          Value: true
         LF_hip_fixed:
-          Value: false
+          Value: true
         LF_shank_fixed:
-          Value: false
+          Value: true
         LF_thigh_fixed:
-          Value: false
+          Value: true
         LH_FOOT:
           Value: false
         LH_HAA:
-          Value: false
+          Value: true
         LH_HFE:
-          Value: false
+          Value: true
         LH_HIP:
-          Value: false
+          Value: true
         LH_KFE:
-          Value: false
+          Value: true
         LH_SHANK:
-          Value: false
+          Value: true
         LH_THIGH:
-          Value: false
+          Value: true
         LH_hip_fixed:
-          Value: false
+          Value: true
         LH_shank_fixed:
-          Value: false
+          Value: true
         LH_thigh_fixed:
-          Value: false
+          Value: true
         RF_FOOT:
           Value: false
         RF_HAA:
-          Value: false
+          Value: true
         RF_HFE:
-          Value: false
+          Value: true
         RF_HIP:
-          Value: false
+          Value: true
         RF_KFE:
-          Value: false
+          Value: true
         RF_SHANK:
-          Value: false
+          Value: true
         RF_THIGH:
-          Value: false
+          Value: true
         RF_hip_fixed:
-          Value: false
+          Value: true
         RF_shank_fixed:
-          Value: false
+          Value: true
         RF_thigh_fixed:
-          Value: false
+          Value: true
         RH_FOOT:
           Value: false
         RH_HAA:
-          Value: false
+          Value: true
         RH_HFE:
-          Value: false
+          Value: true
         RH_HIP:
-          Value: false
+          Value: true
         RH_KFE:
-          Value: false
+          Value: true
         RH_SHANK:
-          Value: false
+          Value: true
         RH_THIGH:
-          Value: false
+          Value: true
         RH_hip_fixed:
-          Value: false
+          Value: true
         RH_shank_fixed:
-          Value: false
+          Value: true
         RH_thigh_fixed:
-          Value: false
+          Value: true
         base:
           Value: true
         base_inertia:
           Value: false
         battery:
-          Value: false
+          Value: true
         bottom_shell:
-          Value: false
+          Value: true
         depth_camera_front_camera:
-          Value: false
+          Value: true
         depth_camera_front_camera_parent:
-          Value: false
+          Value: true
         depth_camera_front_color_frame:
-          Value: false
+          Value: true
         depth_camera_front_color_optical_frame:
-          Value: false
+          Value: true
         depth_camera_front_depth_optical_frame:
-          Value: false
+          Value: true
         depth_camera_left_camera:
-          Value: false
+          Value: true
         depth_camera_left_camera_parent:
-          Value: false
+          Value: true
         depth_camera_left_color_frame:
-          Value: false
+          Value: true
         depth_camera_left_color_optical_frame:
-          Value: false
+          Value: true
         depth_camera_left_depth_optical_frame:
-          Value: false
+          Value: true
         depth_camera_rear_camera:
-          Value: false
+          Value: true
         depth_camera_rear_camera_parent:
-          Value: false
+          Value: true
         depth_camera_rear_color_frame:
-          Value: false
+          Value: true
         depth_camera_rear_color_optical_frame:
-          Value: false
+          Value: true
         depth_camera_rear_depth_optical_frame:
-          Value: false
+          Value: true
         depth_camera_right_camera:
-          Value: false
+          Value: true
         depth_camera_right_camera_parent:
-          Value: false
+          Value: true
         depth_camera_right_color_frame:
-          Value: false
+          Value: true
         depth_camera_right_color_optical_frame:
-          Value: false
+          Value: true
         depth_camera_right_depth_optical_frame:
-          Value: false
+          Value: true
         docking_hatch_cover:
-          Value: false
+          Value: true
         face_front:
-          Value: false
+          Value: true
         face_rear:
-          Value: false
+          Value: true
         handle:
-          Value: false
+          Value: true
         hatch:
-          Value: false
+          Value: true
         imu_link:
-          Value: false
+          Value: true
         lidar:
-          Value: false
+          Value: true
         lidar_cage:
-          Value: false
+          Value: true
         odom:
           Value: true
         remote:
-          Value: false
+          Value: true
         top_shell:
-          Value: false
+          Value: true
         wide_angle_camera_front_camera:
-          Value: false
+          Value: true
         wide_angle_camera_front_camera_parent:
-          Value: false
+          Value: true
         wide_angle_camera_rear_camera:
-          Value: false
+          Value: true
         wide_angle_camera_rear_camera_parent:
-          Value: false
+          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -733,13 +733,13 @@ Visualization Manager:
       Name: MarkerArray
       Namespaces:
         ground_truth0: true
-        ground_truth1: false
-        ground_truth2: false
-        ground_truth3: false
+        ground_truth1: true
+        ground_truth2: true
+        ground_truth3: true
         nn_reconstructed0: true
-        nn_reconstructed1: false
-        nn_reconstructed2: false
-        nn_reconstructed3: false
+        nn_reconstructed1: true
+        nn_reconstructed2: true
+        nn_reconstructed3: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -770,7 +770,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.409294128417969
+      Distance: 6.858462810516357
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -778,9 +778,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.4401153326034546
-        Y: -0.5002204775810242
-        Z: -0.1998935043811798
+        X: -0.37756362557411194
+        Y: -0.4813152551651001
+        Z: 0.3508128523826599
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false

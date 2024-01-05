@@ -28,5 +28,5 @@ include_directories(
     ${TORCH_INCLUDE_DIRS}
 )
 
-add_executable(anymal_c_main src/anymal_c_main.cpp)
-target_link_libraries(anymal_c_main ${catkin_LIBRARIES} ${TORCH_LIBRARIES} yaml-cpp)
+add_executable(main src/main.cpp)
+target_link_libraries(main ${catkin_LIBRARIES} ${TORCH_LIBRARIES} yaml-cpp)

@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include <bobnet_core/Types.h>
 
@@ -16,7 +17,6 @@ namespace bobnet_config {
 
 using namespace std;
 using namespace bobnet_core;
-
 
 // TODO: Everything is inline, can we move it to .cpp file and generate a library?
 
@@ -63,6 +63,22 @@ inline vector_t parseNode(const YAML::Node &node) {
         output(i) = node[i].as<scalar_t>();
     }
     return output;
+}
+
+template <>
+inline std::string parseNode(const YAML::Node &node) {
+    auto out = node.as<std::string>();
+
+    const std::string prefix = "package://";
+    if (out.substr(0, prefix.size()) == prefix) {
+        // find package name
+        const std::string package_name = out.substr(prefix.size(), out.find('/', prefix.size()) - prefix.size());
+
+        // update path
+        out = ros::package::getPath(package_name) + out.substr(prefix.size() + package_name.size());
+    }
+
+    return out;
 }
 
 template <typename T>

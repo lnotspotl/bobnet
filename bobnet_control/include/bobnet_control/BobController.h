@@ -115,6 +115,8 @@ class BobController : public Controller {
 
     vector_t jointAngles2_;
 
+    vector_t standJointAngles_;
+
     matrix_t sampled_;
 
 };

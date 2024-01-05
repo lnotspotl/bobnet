@@ -1,0 +1,72 @@
+robot_name: "spot"
+
+joint_names: &jn ["LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE", "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"]
+foot_names: ["LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"]
+base_name: "base"
+
+state_topic: "spot/state"
+command_topic: "spot/command"
+gridmap_topic: "spot/grid_map"
+change_controller_topic: "spot/change_controller"
+marker_topic: "markers"
+rviz_visualize: true
+
+gridmap_resolution: 0.06 # m
+odom_frame: "odom"
+
+rate: 50 # Hz
+
+state_estimator:
+  update_rate: 400 # Hz
+
+static_controller:
+  stand_controller:
+    joint_angles: [0.0, 0.90, -1.70, 0.0, 1.05, -1.70, 0.0, 0.90, -1.70, 0.0, 1.05, -1.70] # LF, LH, RF, RH
+  sit_controller:
+    joint_angles: [0.0, 1.6, -3.0, 0.0, 1.6, -3.0, 0.0, 1.6, -3.0, 0.0, 1.6, -3.0] # LF, LH, RF, RH
+  kp: 400
+  kd: 5
+  interpolation_time: 1.0 # s
+
+bob_controller:
+  kp: 80.0
+  kd: 2.0
+  model_path: "package://bobnet_control/models/spot_pol.pt"
+
+  default_stance: [
+    [ 0.00490786,  0.1108, -0.46],
+    [ -0.06,  0.1108, -0.46],
+    [ 0.00490786, -0.1108, -0.46],
+    [-0.06, -0.1108, -0.46],
+  ]
+
+  ik:
+    d2: 0.1108
+    a3: 0.32097507691408067
+    a4: 0.335
+
+  cpg:
+    period: 0.6
+    time_offsets: [0.0, 0.3, 0.3, 0.0]  # LF, LH, RF, RH
+    swing_height: 0.2
+
+reference_generator:
+  type: "joystick"
+
+  joystick:
+    topic: "joy"
+    ramped_velocity: 5.0
+    x_index: 1
+    y_index: 0
+    yaw_index: 3
+    x_scale: 1.0
+    y_scale: 0.5
+    yaw_scale: 0.5
+
+  twist:
+    topic: "cmd_vel"
+
+spot:
+  joint_controller:
+      type: bobnet_gazebo/JointController
+      joints: *jn
