@@ -31,7 +31,7 @@ static_controller:
 bob_controller:
   kp: 80.0
   kd: 2.0
-  model_path: "package://bobnet_control/models/pol.pt"
+  model_path: "package://bobnet_control/models/pol22.pt"
 
   default_stance: [
     [ 0.00790786,  0.05720384, -0.573],

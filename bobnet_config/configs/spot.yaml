@@ -25,19 +25,19 @@ static_controller:
   sit_controller:
     joint_angles: [0.0, 1.6, -2.7, 0.0, 1.6, -2.7, 0.0, 1.6, -2.7, 0.0, 1.6, -2.7] # LF, LH, RF, RH
   kp: 400
-  kd: 5
+  kd: 20
   interpolation_time: 1.0 # s
 
 bob_controller:
   kp: 80.0
   kd: 2.0
-  model_path: "package://bobnet_control/models/spot_pol.pt"
+  model_path: "package://bobnet_control/models/spot2.pt_jitted.pt"
 
   default_stance: [
-    [ 0.00490786,  0.1108, -0.46],
-    [ -0.06,  0.1108, -0.46],
-    [ 0.00490786, -0.1108, -0.46],
-    [-0.06, -0.1108, -0.46],
+    [ 0.00490786,  0.1108, -0.55],
+    [ -0.06,  0.1108, -0.55],
+    [ 0.00490786, -0.1108, -0.55],
+    [-0.06, -0.1108, -0.55],
   ]
 
   ik:

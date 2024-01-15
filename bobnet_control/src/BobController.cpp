@@ -44,8 +44,8 @@ BobController::BobController(std::shared_ptr<JointPID> &pidControllerPtr,
     model_.get_method("set_hidden_size")(stack);
     resetHistory();
 
-    // auto legHeights = cpg_->legHeights();
-    // jointAngles2_ = ik_->solve(legHeights);
+    auto legHeights = cpg_->legHeights();
+    jointAngles2_ = ik_->solve(legHeights);
 
     standJointAngles_ = bobnet_config::fromRosConfigFile<vector_t>("static_controller/stand_controller/joint_angles");
 }
@@ -61,9 +61,15 @@ bool BobController::isSupported(const std::string &controllerType) {
     return false;
 }
 
-void BobController::updateHistory(const at::Tensor &input, const at::Tensor &action) {
+void BobController::updateHistory(const at::Tensor &input, const at::Tensor &action, const State &state) {
     // update position history
-    historyResiduals_[historyResidualsIndex_] = input.index({jointResidualsSlice_});
+    // historyResiduals_[historyResidualsIndex_] = input.index({jointResidualsSlice_});
+    // for (size_t i = 0; i < 12; ++i) {
+    //     input[12 + i] = (state.jointPositions[i] - standJointAngles_[i]) * JOINT_POS_SCALE;
+    // }
+    for(int i = 0; i < 12; ++i) {
+        historyResiduals_[historyResidualsIndex_][i] = (state.jointPositions[i] - jointAngles2_[i]) * JOINT_POS_SCALE;
+    }
     historyResidualsIndex_ = (historyResidualsIndex_ + 1) % POSITION_HISTORY_SIZE;
 
     // update velocity history
@@ -133,7 +139,7 @@ void BobController::fillBaseAngularVelocity(at::Tensor &input, const State &stat
 void BobController::fillJointResiduals(at::Tensor &input, const State &state) {
     // fill joint residuals
     for (size_t i = 0; i < 12; ++i) {
-        input[12 + i] = (state.jointPositions[i] - standJointAngles_[i]) * JOINT_POS_SCALE;
+        input[12 + i] = (state.jointPositions[i] - jointAngles2_[i]) * JOINT_POS_SCALE;
     }
 }
 
@@ -272,6 +278,8 @@ void BobController::sendCommand(const scalar_t dt) {
     at::Tensor nnInput = getNNInput(state, dt);
     auto t2 = std::chrono::high_resolution_clock::now();
 
+    cpg_->step(dt);
+
     ROS_INFO_STREAM_THROTTLE(
         1.0, "NN input computation took: "
                  << std::chrono::duration_cast<std::chrono::microseconds>(t2 - ts1).count() / 1000.0 << " ms");
@@ -312,13 +320,17 @@ void BobController::sendCommand(const scalar_t dt) {
 
     pidControllerPtr_->sendCommand(jointAngles2_, kp_, kd_);
 
-    // legHeights = cpg_->legHeights();
-    // jointAngles2_ = ik_->solve(legHeights) + jointResidualsVec;
+    cpg_->step(-dt);
+    legHeights = cpg_->legHeights();
+    jointAngles2_ = ik_->solve(legHeights);
 
     // update history buffer
-    updateHistory(nnInput, action);
-    // update central pattern generator
+
+    updateHistory(nnInput, action, state);
     cpg_->step(dt);
+
+    // update central pattern generator
+    // cpg_->step(dt);
 }
 
 }  // namespace bobnet_control

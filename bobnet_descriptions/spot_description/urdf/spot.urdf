@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- Note: Effort and velocity limits copied from Anymal C:  https://github.com/ANYbotics/anymal_c_simple_description/blob/master/urdf/anymal.urdf -->
 <robot name="spot" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <link name="base">
     <visual>
@@ -46,10 +45,16 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="fl_hip"/>
-    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
+    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
   </joint>
 
   <link name="fl_uleg">
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.15"/>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+    </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -68,20 +73,14 @@
     <axis xyz="0 1      0"/>
     <parent link="fl_hip"/>
     <child link="fl_uleg"/>
-    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
+    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
   </joint>
 
   <link name="fl_lleg">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.155"/>
       <geometry>
-        <mesh filename="package://spot_description/meshes/visual/fl_lleg.dae"/>
-      </geometry>
-    </visual>.
-    <collision name="LF_FOOT_collision_sensor">
-      <origin xyz="0 0 -0.335" rpy="0 0 0"/>
-       <geometry>
-        <sphere radius="0.035" />
+        <cylinder length="0.30" radius="0.03"/>
       </geometry>
     </collision>
     <inertial>
@@ -89,20 +88,38 @@
       <mass value="0.35"/>
       <inertia ixx="0.003999022654901177" ixy="0.0" ixz="0.0" iyy="0.0040503157598010785" iyz="0.0" izz="0.0001493402097647426"/>
     </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://spot_description/meshes/visual/fl_lleg.dae"/>
+      </geometry>
+    </visual>
   </link>
   <joint name="LF_KFE" type="revolute">
     <origin xyz="0.025 0.000 -0.3200" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <parent link="fl_uleg"/>
     <child link="fl_lleg"/>
-    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.254402"/>
+    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
   </joint>
 
-  <link name="LF_FOOT"/>
-  <joint name="LF_FOOT_JOINT" type="fixed">
+  <link name="LF_FOOT">
+  <inertial>
+            <origin rpy="0 0 0" xyz="0.00948 -0.00948 0.1468"/>
+            <mass value="0.215"/>
+            <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+        </inertial>
+    <collision name="LF_FOOT_collision_sensor">
+      <origin xyz="0 0 -0.0" rpy="0 0 0"/>
+       <geometry>
+        <sphere radius="0.035" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="LF_FOOT_JOINT" type="fixed" dont_collapse="true">
     <origin xyz="0.0 0.0 -0.335" rpy="0 0 0"/>
     <parent link="fl_lleg"/>
-    <child link="LF_FOOT"/>\
+    <child link="LF_FOOT"/>
   </joint>
 
   <link name="fr_hip">
@@ -124,10 +141,16 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="fr_hip"/>
-    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
+    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
   </joint>
 
   <link name="fr_uleg">
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.15"/>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+    </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -146,20 +169,14 @@
     <axis xyz="0  1      0"/>
     <parent link="fr_hip"/>
     <child link="fr_uleg"/>
-    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
+    <limit effort="100" velocity="7.5" lower="-10.898845" upper="12.24363"/>
   </joint>
 
   <link name="fr_lleg">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.155"/>
       <geometry>
-        <mesh filename="package://spot_description/meshes/visual/fr_lleg.dae"/>
-      </geometry>
-    </visual>
-    <collision name="RF_FOOT_collision_sensor">
-      <origin xyz="0 0 -0.335" rpy="0 0 0"/>
-       <geometry>
-        <sphere radius="0.035" />
+        <cylinder length="0.30" radius="0.03"/>
       </geometry>
     </collision>
     <inertial>
@@ -167,17 +184,35 @@
       <mass value="0.35"/>
       <inertia ixx="0.003999022654901177" ixy="0.0" ixz="0.0" iyy="0.0040503157598010785" iyz="0.0" izz="0.0001493402097647426"/>
     </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://spot_description/meshes/visual/fr_lleg.dae"/>
+      </geometry>
+    </visual>
   </link>
   <joint name="RF_KFE" type="revolute">
     <origin xyz="0.025 0.000 -0.3200" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <parent link="fr_uleg"/>
     <child link="fr_lleg"/>
-    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.254402"/>
+    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
   </joint>
 
-  <link name="RF_FOOT"/>
-  <joint name="RF_FOOT_JOINT" type="fixed">
+  <link name="RF_FOOT">
+  <inertial>
+            <origin rpy="0 0 0" xyz="0.00948 -0.00948 0.1468"/>
+            <mass value="0.215"/>
+            <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+        </inertial>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.0"/>
+      <geometry>
+        <sphere radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="RF_FOOT_JOINT" type="fixed" dont_collapse="true">
     <origin xyz="0.0 0.0 -0.335" rpy="0 0 0"/>
     <parent link="fr_lleg"/>
     <child link="RF_FOOT"/>
@@ -202,10 +237,16 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="hl_hip"/>
-    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
+    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
   </joint>
 
   <link name="hl_uleg">
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.15"/>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+    </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -224,20 +265,14 @@
     <axis xyz="0 1      0"/>
     <parent link="hl_hip"/>
     <child link="hl_uleg"/>
-    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
+    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
   </joint>
 
   <link name="hl_lleg">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.155"/>
       <geometry>
-        <mesh filename="package://spot_description/meshes/visual/hl_lleg.dae"/>
-      </geometry>
-    </visual>
-    <collision name="LH_FOOT_collision_sensor">
-      <origin xyz="0 0 -0.335" rpy="0 0 0"/>
-       <geometry>
-        <sphere radius="0.035" />
+        <cylinder length="0.30" radius="0.03"/>
       </geometry>
     </collision>
     <inertial>
@@ -245,17 +280,35 @@
       <mass value="0.35"/>
       <inertia ixx="0.003999022654901177" ixy="0.0" ixz="0.0" iyy="0.0040503157598010785" iyz="0.0" izz="0.0001493402097647426"/>
     </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://spot_description/meshes/visual/hl_lleg.dae"/>
+      </geometry>
+    </visual>
   </link>
   <joint name="LH_KFE" type="revolute">
     <origin xyz="0.025 0.000 -0.3200" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <parent link="hl_uleg"/>
     <child link="hl_lleg"/>
-    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.254402"/>
+    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
   </joint>
 
-  <link name="LH_FOOT"/>
-  <joint name="LH_FOOT_JOINT" type="fixed">
+  <link name="LH_FOOT">
+  <inertial>
+            <origin rpy="0 0 0" xyz="0.00948 -0.00948 0.1468"/>
+            <mass value="0.215"/>
+            <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+        </inertial>
+    <collision name="LH_FOOT_collision_sensor">
+      <origin xyz="0 0 -0.0" rpy="0 0 0"/>
+       <geometry>
+        <sphere radius="0.035" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="LH_FOOT_JOINT" type="fixed" dont_collapse="true">
     <origin xyz="0.0 0.0 -0.335" rpy="0 0 0"/>
     <parent link="hl_lleg"/>
     <child link="LH_FOOT"/>
@@ -281,10 +334,16 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="hr_hip"/>
-    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
+    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
   </joint>
 
   <link name="hr_uleg">
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.15"/>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+    </collision>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -303,20 +362,14 @@
     <axis xyz="0  1      0"/>
     <parent link="hr_hip"/>
     <child link="hr_uleg"/>
-    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
+    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
   </joint>
 
   <link name="hr_lleg">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+  <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0 -0.155"/>
       <geometry>
-        <mesh filename="package://spot_description/meshes/visual/hr_lleg.dae"/>
-      </geometry>
-    </visual>
-    <collision name="RH_FOOT_collision_sensor">
-      <origin xyz="0 0 -0.335" rpy="0 0 0"/>
-       <geometry>
-        <sphere radius="0.035" />
+        <cylinder length="0.30" radius="0.03"/>
       </geometry>
     </collision>
     <inertial>
@@ -324,23 +377,47 @@
       <mass value="0.35"/>
       <inertia ixx="0.003999022654901177" ixy="0.0" ixz="0.0" iyy="0.0040503157598010785" iyz="0.0" izz="0.0001493402097647426"/>
     </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://spot_description/meshes/visual/hr_lleg.dae"/>
+      </geometry>
+    </visual>
   </link>
   <joint name="RH_KFE" type="revolute">
     <origin xyz="0.025 0.000 -0.3200" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <parent link="hr_uleg"/>
     <child link="hr_lleg"/>
-    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.254402"/>
+    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
   </joint>
 
-  <link name="RH_FOOT"/>
-  <joint name="RH_FOOT_JOINT" type="fixed">
+ <link name="RH_FOOT">
+ <inertial>
+            <origin rpy="0 0 0" xyz="0.00948 -0.00948 0.1468"/>
+            <mass value="0.215"/>
+            <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+        </inertial>
+  <collision name="RH_FOOT_collision_sensor">
+      <origin xyz="0 0 -0.0" rpy="0 0 0"/>
+       <geometry>
+        <sphere radius="0.035" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="RH_FOOT_JOINT" type="fixed" dont_collapse="true">
     <origin xyz="0.0 0.0 -0.335" rpy="0 0 0"/>
     <parent link="hr_lleg"/>
     <child link="RH_FOOT"/>
   </joint>
 
-  <gazebo reference="LF_FOOT">
+  <!-- Standard accessories. -->
+  <!-- <xacro:include filename="$(find spot_description)/urdf/accessories.urdf.xacro" /> -->
+
+  <!-- Optional custom includes. -->
+  <!-- <xacro:include filename="$(optenv SPOT_URDF_EXTRAS empty.urdf)" /> -->
+
+    <gazebo reference="LF_FOOT">
     <mu1>1.85</mu1>
     <mu2>1.85</mu2>
     <kp value="1000000.0"/>
@@ -368,15 +445,15 @@
     <kd value="1.0"/>
   </gazebo>
 
-  <gazebo>
-    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      <robotNamespace>/spot</robotNamespace>
-    </plugin>
-    <plugin filename="libStateEstimator.so" name="StateEstimator"/>
-  </gazebo>
+      <gazebo>
+      <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <robotNamespace>/spot</robotNamespace>
+      </plugin>
+      <plugin filename="libStateEstimator.so" name="StateEstimator"/>
+    </gazebo>
 
-  <transmission name="transmission_0">
+    <transmission name="transmission_0">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LF_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -409,9 +486,20 @@
     </actuator>
   </transmission>
 
-  <transmission name="transmission_3">
+  <transmission name="transmission_0dasd">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RF_HAA">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor_0dasd">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="transmission_3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="RF_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_3">
@@ -422,7 +510,7 @@
 
   <transmission name="transmission_4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_HFE">
+    <joint name="RF_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_4">
@@ -433,7 +521,7 @@
 
   <transmission name="transmission_5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_KFE">
+    <joint name="LH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_5">
@@ -444,67 +532,94 @@
 
   <transmission name="transmission_6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="LH_HAA">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor_6">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
-
-  <transmission name="transmission_7">
-    <type>transmission_interface/SimpleTransmission</type>
     <joint name="LH_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_7">
+    <actuator name="motor_61">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_8">
+  <transmission name="transmission_2hh">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_8">
+    <actuator name="motor_2hh">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_9">
+  <transmission name="transmission_0dasdfdsfds">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_9">
+    <actuator name="motor_0dasdssss">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_10">
+  <transmission name="transmission_332">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_10">
+    <actuator name="motor_332">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_11">
+  <transmission name="transmission_4fsdfsa121">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_11">
+    <actuator name="motor_4fsdfsdfdsf">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
+
+<gazebo reference="LF_FOOT">
+    <sensor name="lf_foot_contact" type="contact">
+    <plugin name="lf_contact_plugin" filename="libContactSensor.so"/>
+    <contact>
+        <collision>fl_lleg_fixed_joint_lump__LF_FOOT_collision_sensor_collision</collision>
+    </contact>
+    </sensor>
+</gazebo>
+
+<gazebo reference="LH_FOOT">
+    <sensor name="lh_foot_contact" type="contact">
+    <plugin name="lh_contact_plugin" filename="libContactSensor.so"/>
+    <contact>
+        <collision>hl_lleg_fixed_joint_lump__LH_FOOT_collision_sensor_collision</collision>
+    </contact>
+    </sensor>
+</gazebo>
+
+<gazebo reference="RF_FOOT">
+    <sensor name="rf_foot_contact" type="contact">
+    <plugin name="rf_contact_plugin" filename="libContactSensor.so"/>
+    <contact>
+        <collision>fr_lleg_fixed_joint_lump__RF_FOOT_collision_sensor_collision</collision>
+    </contact>
+    </sensor>
+</gazebo>
+
+<gazebo reference="RH_FOOT">
+    <sensor name="rh_foot_contact" type="contact">
+    <plugin name="rh_contact_plugin" filename="libContactSensor.so"/>
+    <contact>
+        <collision>hr_lleg_fixed_joint_lump__RH_FOOT_collision_sensor_collision</collision>
+    </contact>
+    </sensor>
+</gazebo>
+
+
 </robot>

@@ -91,7 +91,7 @@ class BobController : public Controller {
     void fillHistoryVelocities(at::Tensor &input);
     void fillHistoryActions(at::Tensor &input);
 
-    void updateHistory(const at::Tensor &input, const at::Tensor &action);
+    void updateHistory(const at::Tensor &input, const at::Tensor &action, const State &state);
     void resetHistory();
 
     const Slice commandSlice_ = Slice(0, 3);
