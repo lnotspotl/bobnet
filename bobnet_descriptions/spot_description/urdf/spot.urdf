@@ -45,7 +45,7 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="fl_hip"/>
-    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
+    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
   </joint>
 
   <link name="fl_uleg">
@@ -73,7 +73,7 @@
     <axis xyz="0 1      0"/>
     <parent link="fl_hip"/>
     <child link="fl_uleg"/>
-    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
+    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
   </joint>
 
   <link name="fl_lleg">
@@ -100,7 +100,7 @@
     <axis xyz="0 1 0"/>
     <parent link="fl_uleg"/>
     <child link="fl_lleg"/>
-    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
+    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.267153"/>
   </joint>
 
   <link name="LF_FOOT">
@@ -141,7 +141,7 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="fr_hip"/>
-    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
+    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
   </joint>
 
   <link name="fr_uleg">
@@ -169,7 +169,7 @@
     <axis xyz="0  1      0"/>
     <parent link="fr_hip"/>
     <child link="fr_uleg"/>
-    <limit effort="100" velocity="7.5" lower="-10.898845" upper="12.24363"/>
+    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
   </joint>
 
   <link name="fr_lleg">
@@ -196,7 +196,7 @@
     <axis xyz="0 1 0"/>
     <parent link="fr_uleg"/>
     <child link="fr_lleg"/>
-    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
+    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.267153"/>
   </joint>
 
   <link name="RF_FOOT">
@@ -237,7 +237,7 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="hl_hip"/>
-    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
+    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
   </joint>
 
   <link name="hl_uleg">
@@ -265,7 +265,7 @@
     <axis xyz="0 1      0"/>
     <parent link="hl_hip"/>
     <child link="hl_uleg"/>
-    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
+    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
   </joint>
 
   <link name="hl_lleg">
@@ -292,7 +292,7 @@
     <axis xyz="0 1 0"/>
     <parent link="hl_uleg"/>
     <child link="hl_lleg"/>
-    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
+    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.267153"/>
   </joint>
 
   <link name="LH_FOOT">
@@ -334,7 +334,7 @@
     <axis xyz="1 0 0"/>
     <parent link="base"/>
     <child link="hr_hip"/>
-    <limit effort="100" velocity="7.5" lower="-10.78539816339744827899" upper="10.78539816339744827899"/>
+    <limit effort="80" velocity="7.5" lower="-0.78539816339744827899" upper="0.78539816339744827899"/>
   </joint>
 
   <link name="hr_uleg">
@@ -362,7 +362,7 @@
     <axis xyz="0  1      0"/>
     <parent link="hr_hip"/>
     <child link="hr_uleg"/>
-    <limit effort="100" velocity="7.5" lower="-10.89884456477707963539" upper="12.2951079663725435509"/>
+    <limit effort="80" velocity="7.5" lower="-0.89884456477707963539" upper="2.2951079663725435509"/>
   </joint>
 
   <link name="hr_lleg">
@@ -389,7 +389,7 @@
     <axis xyz="0 1 0"/>
     <parent link="hr_uleg"/>
     <child link="hr_lleg"/>
-    <limit effort="100" velocity="7.5" lower="-12.7929" upper="12.7929"/>
+    <limit effort="80" velocity="7.5" lower="-2.7929" upper="-0.267153"/>
   </joint>
 
  <link name="RH_FOOT">
@@ -445,15 +445,15 @@
     <kd value="1.0"/>
   </gazebo>
 
-      <gazebo>
-      <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
-        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        <robotNamespace>/spot</robotNamespace>
-      </plugin>
-      <plugin filename="libStateEstimator.so" name="StateEstimator"/>
-    </gazebo>
+  <gazebo>
+    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <robotNamespace>/spot</robotNamespace>
+    </plugin>
+    <plugin filename="libStateEstimator.so" name="StateEstimator"/>
+  </gazebo>
 
-    <transmission name="transmission_0">
+  <transmission name="transmission_0">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LF_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -486,20 +486,9 @@
     </actuator>
   </transmission>
 
-  <transmission name="transmission_0dasd">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_HAA">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor_0dasd">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
-
   <transmission name="transmission_3">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_HFE">
+    <joint name="RF_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_3">
@@ -510,7 +499,7 @@
 
   <transmission name="transmission_4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_KFE">
+    <joint name="RF_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_4">
@@ -521,7 +510,7 @@
 
   <transmission name="transmission_5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="LH_HAA">
+    <joint name="RF_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_5">
@@ -532,94 +521,68 @@
 
   <transmission name="transmission_6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="LH_HFE">
+    <joint name="LH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_61">
+    <actuator name="motor_6">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_2hh">
+  <transmission name="transmission_7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="LH_HFE">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor_7">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="transmission_8">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_2hh">
+    <actuator name="motor_8">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_0dasdfdsfds">
+  <transmission name="transmission_9">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_0dasdssss">
+    <actuator name="motor_9">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_332">
+  <transmission name="transmission_10">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_332">
+    <actuator name="motor_10">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_4fsdfsa121">
+  <transmission name="transmission_11">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_4fsdfsdfdsf">
+    <actuator name="motor_11">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-
-<gazebo reference="LF_FOOT">
-    <sensor name="lf_foot_contact" type="contact">
-    <plugin name="lf_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>fl_lleg_fixed_joint_lump__LF_FOOT_collision_sensor_collision</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="LH_FOOT">
-    <sensor name="lh_foot_contact" type="contact">
-    <plugin name="lh_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>hl_lleg_fixed_joint_lump__LH_FOOT_collision_sensor_collision</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="RF_FOOT">
-    <sensor name="rf_foot_contact" type="contact">
-    <plugin name="rf_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>fr_lleg_fixed_joint_lump__RF_FOOT_collision_sensor_collision</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="RH_FOOT">
-    <sensor name="rh_foot_contact" type="contact">
-    <plugin name="rh_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>hr_lleg_fixed_joint_lump__RH_FOOT_collision_sensor_collision</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
 
 </robot>

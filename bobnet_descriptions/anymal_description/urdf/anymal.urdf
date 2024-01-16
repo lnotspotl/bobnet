@@ -1605,7 +1605,7 @@
       <plugin filename="libStateEstimator.so" name="StateEstimator"/>
     </gazebo>
 
-    <transmission name="transmission_0">
+   <transmission name="transmission_0">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LF_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -1638,20 +1638,9 @@
     </actuator>
   </transmission>
 
-  <transmission name="transmission_0dasd">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_HAA">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor_0dasd">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
-
   <transmission name="transmission_3">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_HFE">
+    <joint name="RF_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_3">
@@ -1662,7 +1651,7 @@
 
   <transmission name="transmission_4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="RF_KFE">
+    <joint name="RF_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_4">
@@ -1673,7 +1662,7 @@
 
   <transmission name="transmission_5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="LH_HAA">
+    <joint name="RF_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor_5">
@@ -1684,54 +1673,65 @@
 
   <transmission name="transmission_6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="LH_HFE">
+    <joint name="LH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_61">
+    <actuator name="motor_6">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_2hh">
+  <transmission name="transmission_7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="LH_HFE">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor_7">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="transmission_8">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="LH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_2hh">
+    <actuator name="motor_8">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_0dasdfdsfds">
+  <transmission name="transmission_9">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HAA">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_0dasdssss">
+    <actuator name="motor_9">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_332">
+  <transmission name="transmission_10">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_HFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_332">
+    <actuator name="motor_10">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
-  <transmission name="transmission_4fsdfsa121">
+  <transmission name="transmission_11">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="RH_KFE">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="motor_4fsdfsdfdsf">
+    <actuator name="motor_11">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
@@ -1764,43 +1764,5 @@
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
-
-
-<gazebo reference="LF_FOOT">
-    <sensor name="lf_foot_contact" type="contact">
-    <plugin name="lf_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>LF_SHANK_fixed_joint_lump__LF_FOOT_collision_sensor_collision_3</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="LH_FOOT">
-    <sensor name="lh_foot_contact" type="contact">
-    <plugin name="lh_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>LH_SHANK_fixed_joint_lump__LH_FOOT_collision_sensor_collision_3</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="RF_FOOT">
-    <sensor name="rf_foot_contact" type="contact">
-    <plugin name="rf_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>RF_SHANK_fixed_joint_lump__RF_FOOT_collision_sensor_collision_3</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
-<gazebo reference="RH_FOOT">
-    <sensor name="rh_foot_contact" type="contact">
-    <plugin name="rh_contact_plugin" filename="libContactSensor.so"/>
-    <contact>
-        <collision>RH_SHANK_fixed_joint_lump__RH_FOOT_collision_sensor_collision_3</collision>
-    </contact>
-    </sensor>
-</gazebo>
-
 
 </robot>
