@@ -36,7 +36,6 @@ include_directories(
 
 add_library(bobnet_visualization
     src/RvizVisualizer.cpp
-    src/anymal_c/AnymalCVisualizer.cpp
     src/Visualizers.cpp
 )
 target_link_libraries(bobnet_visualization ${catkin_LIBRARIES}
