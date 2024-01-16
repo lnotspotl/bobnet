@@ -63,11 +63,7 @@ bool BobController::isSupported(const std::string &controllerType) {
 
 void BobController::updateHistory(const at::Tensor &input, const at::Tensor &action, const State &state) {
     // update position history
-    // historyResiduals_[historyResidualsIndex_] = input.index({jointResidualsSlice_});
-    // for (size_t i = 0; i < 12; ++i) {
-    //     input[12 + i] = (state.jointPositions[i] - standJointAngles_[i]) * JOINT_POS_SCALE;
-    // }
-    for(int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 12; ++i) {
         historyResiduals_[historyResidualsIndex_][i] = (state.jointPositions[i] - jointAngles2_[i]) * JOINT_POS_SCALE;
     }
     historyResidualsIndex_ = (historyResidualsIndex_ + 1) % POSITION_HISTORY_SIZE;
@@ -166,7 +162,8 @@ void BobController::fillHistory(at::Tensor &input) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void BobController::fillCpg(at::Tensor &input) {
-    const size_t startIdx = 36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + COMMAND_HISTORY_SIZE * 16;
+    const size_t startIdx = 36 + POSITION_HISTORY_SIZE * POSITION_SIZE + VELOCITY_HISTORY_SIZE * VELOCITY_SIZE +
+                            COMMAND_HISTORY_SIZE * COMMAND_SIZE;
     auto cpgObservation = cpg_->getObservation();
     for (size_t i = 0; i < 8; ++i) {
         input[startIdx + i] = cpgObservation[i];
@@ -177,8 +174,8 @@ void BobController::fillCpg(at::Tensor &input) {
 /***********************************************************************************************************************/
 /***********************************************************************************************************************/
 void BobController::fillHeights(at::Tensor &input, const State &state) {
-    const size_t startIdx =
-        36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + COMMAND_HISTORY_SIZE * 16 + 8;
+    const size_t startIdx = 36 + POSITION_HISTORY_SIZE * POSITION_SIZE + VELOCITY_HISTORY_SIZE * VELOCITY_SIZE +
+                            COMMAND_HISTORY_SIZE * COMMAND_SIZE + 8;
 
     // Find yaw angle
     quaternion_t q(state.baseOrientationWorld[3], state.baseOrientationWorld[0], state.baseOrientationWorld[1],
@@ -221,9 +218,10 @@ void BobController::fillHeights(at::Tensor &input, const State &state) {
 /***********************************************************************************************************************/
 void BobController::fillHistoryResiduals(at::Tensor &input) {
     int ip = mod(historyResidualsIndex_ - 1, POSITION_HISTORY_SIZE);
+    const size_t startIdx = 36;
     for (int i = 0; i < POSITION_HISTORY_SIZE; ++i) {
         int idx = mod(ip + i, POSITION_HISTORY_SIZE);
-        input.index({Slice(36 + i * 12, 36 + (i + 1) * 12)}) = historyResiduals_[idx];
+        input.index({Slice(startIdx + i * POSITION_SIZE, startIdx + (i + 1) * POSITION_SIZE)}) = historyResiduals_[idx];
     }
 }
 
@@ -232,9 +230,10 @@ void BobController::fillHistoryResiduals(at::Tensor &input) {
 /***********************************************************************************************************************/
 void BobController::fillHistoryVelocities(at::Tensor &input) {
     int ip = mod(historyVelocitiesIndex_ - 1, VELOCITY_HISTORY_SIZE);
+    const size_t startIdx = 36 + POSITION_HISTORY_SIZE * POSITION_SIZE;
     for (int i = 0; i < VELOCITY_HISTORY_SIZE; ++i) {
         int idx = mod(ip + i, VELOCITY_HISTORY_SIZE);
-        input.index({Slice(36 + POSITION_HISTORY_SIZE * 12 + i * 12, 36 + POSITION_HISTORY_SIZE * 12 + (i + 1) * 12)}) =
+        input.index({Slice(startIdx + i * VELOCITY_SIZE, startIdx + (i + 1) * VELOCITY_SIZE)}) =
             historyVelocities_[idx];
     }
 }
@@ -244,11 +243,10 @@ void BobController::fillHistoryVelocities(at::Tensor &input) {
 /***********************************************************************************************************************/
 void BobController::fillHistoryActions(at::Tensor &input) {
     int ip = mod(historyActionsIndex_ - 1, COMMAND_HISTORY_SIZE);
+    const size_t startIdx = 36 + POSITION_HISTORY_SIZE * POSITION_SIZE + VELOCITY_HISTORY_SIZE * VELOCITY_SIZE;
     for (int i = 0; i < COMMAND_HISTORY_SIZE; ++i) {
         int idx = mod(ip + i, COMMAND_HISTORY_SIZE);
-        input.index({Slice(36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + i * 16,
-                           36 + POSITION_HISTORY_SIZE * 12 + VELOCITY_HISTORY_SIZE * 12 + (i + 1) * 16)}) =
-            historyActions_[idx];
+        input.index({Slice(startIdx + i * COMMAND_SIZE, startIdx + (i + 1) * COMMAND_SIZE)}) = historyActions_[idx];
     }
 }
 
@@ -307,30 +305,29 @@ void BobController::sendCommand(const scalar_t dt) {
         phaseOffsetsVec[i] = (phaseOffsets[i].item<float>() * ACTION_SCALE);
     }
 
-    // std::cout << phaseOffsetsVec.transpose() << std::endl << std::endl;
-    at::Tensor jointResiduals = action.index({Slice(4, COMMAND_SIZE)});
+    at::Tensor jointResiduals = action.index({Slice(0, COMMAND_SIZE)});
     vector_t jointResidualsVec(12);
     for (size_t i = 0; i < 12; ++i) {
         jointResidualsVec[i] = (jointResiduals[i].item<float>() * ACTION_SCALE);
     }
 
     // compute ik
-    auto legHeights = cpg_->legHeights(phaseOffsetsVec);
+    auto legHeights = cpg_->legHeights();
     jointAngles2_ = ik_->solve(legHeights) + jointResidualsVec;
 
+    // Send command
     pidControllerPtr_->sendCommand(jointAngles2_, kp_, kd_);
 
+    // Compute IK again for buffer, TODO: Remove this calculation
     cpg_->step(-dt);
     legHeights = cpg_->legHeights();
     jointAngles2_ = ik_->solve(legHeights);
 
     // update history buffer
-
     updateHistory(nnInput, action, state);
-    cpg_->step(dt);
 
     // update central pattern generator
-    // cpg_->step(dt);
+    cpg_->step(dt);
 }
 
 }  // namespace bobnet_control

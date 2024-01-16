@@ -67,13 +67,13 @@ class BobController : public Controller {
 
     int POSITION_SIZE = 12;
     int VELOCITY_SIZE = 12;
-    int COMMAND_SIZE = 16;
+    int COMMAND_SIZE = 12;
 
     bobnet_visualization::HeightsReconstructedVisualizer visualizer_;
 
     Module model_;
 
-    constexpr size_t getNNInputSize() { return 3 + 3 + 3 + 3 + 12 + 12 + 3 * 12 + 2 * 12 + 2 * 16 + 8 + 4 * 52; }
+    constexpr size_t getNNInputSize() { return 3 + 3 + 3 + 3 + 12 + 12 + 3 * 12 + 2 * 12 + 2 * 12 + 8 + 4 * 52; }
 
     at::Tensor getNNInput(const State &state, scalar_t dt);
 
